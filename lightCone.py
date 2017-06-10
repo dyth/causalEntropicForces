@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-"""create light cone from all possible moves"""
+"""create light cone frrahom all possible moves"""
 import matplotlib.pyplot as plt
 import random
+import math
 
 from noughtsCrosses import *
 
@@ -26,22 +27,50 @@ def randomMove(player, board):
 def randomWalk(board, player, history):
     'take a random walk through the board'
     winner = evaluate(board)
-    if (winner != None or len(history) == 9):
+    if (winner != None or len(history) == len(board)):
         return history, winner
     else:
         board, move = randomMove(player, board)
         history.append(move)
         return randomWalk(board, nextPlayer(player), history)
 
+
+def permutation(k, n):
+    'return number of permutations of k in n'
+    return float(math.factorial(n)) / float(math.factorial(k))
+
+
+def historyToEncoding(light, history, i, j):
+    'convert a history list of moves into light cone representation'
+    if (len(light) == len(history)):
+        return light
+    else:
+        perm = permutation(j, 9)
+        light.append(float(light[-1]) + float(history[i])/perm)
+        return historyToEncoding(light, history, i+1, j-1)
+
     
+def enum(l):
+    'return enumerated list of 0 to len(l)'
+    return range(len(light))
+
+
+def centreLight(light):
+    'centre the light cone around 0'
+    light = [light[i] + 1.0 / (2.0 * permutation(9-i, 9)) for i in enum(light)]
+    return light
+
+
 
 print "matplotlib finished building"
 ax = plt.gca()
 plt.ion()
 plt.show()
 while True:
-    history, winner = randomWalk(initialBoard, 1, [])
+    history, winner = randomWalk(initialBoard, 1, [0])
+    light = historyToEncoding([0], history, 1, 8)
+    light = centreLight(light)
     colour = 'g' if (winner == 1) else 'r'
-    ax.plot(history, color=colour)
+    ax.plot(light, enum(light), color=colour)
     plt.draw()
-    raw_input()
+    plt.pause(0.05)
