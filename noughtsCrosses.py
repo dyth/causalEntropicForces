@@ -21,8 +21,6 @@ def move(player, board, pos1, pos2):
     if (moved[index] == None):
         moved[index] = player
         return moved
-    else:
-        return None
 
     
 def moveAll(player, board):
