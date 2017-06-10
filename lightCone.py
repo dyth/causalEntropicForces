@@ -33,6 +33,15 @@ def randomWalk(board, player, history):
         history.append(move)
         return randomWalk(board, nextPlayer(player), history)
 
+    
 
+print "matplotlib finished building"
+ax = plt.gca()
+plt.ion()
+plt.show()
 while True:
-    print randomWalk(initialBoard, 1, [])
+    history, winner = randomWalk(initialBoard, 1, [])
+    colour = 'g' if (winner == 1) else 'r'
+    ax.plot(history, color=colour)
+    plt.draw()
+    raw_input()
