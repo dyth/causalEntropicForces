@@ -23,16 +23,16 @@ def randomMove(player, board):
         return randomMove(player, board)
 
 
-def randomWalk(board, player, history)
+def randomWalk(board, player, history):
     'take a random walk through the board'
     winner = evaluate(board)
-    if (winner != None)
+    if (winner != None or len(history) == 9):
         return history, winner
     else:
         board, move = randomMove(player, board)
         history.append(move)
-        randomWalk(board, nextPlayer(player), history)
+        return randomWalk(board, nextPlayer(player), history)
 
 
 while True:
-    
+    print randomWalk(initialBoard, 1, [])
