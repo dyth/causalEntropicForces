@@ -4,6 +4,6 @@ Code is based on the algorithm described [this paper](http://math.mit.edu/~freer
 
 Noughts and Crosses was chosen because it was simple enough to implement, yet orthogonal to the other examples in the supplementary material because it has a well-defined goal state.
 
-`lightCone.py` plots random walks of a game. It utilises `pyplot` from `matplotlib`.
+`lightCone.py` plots a light cone graph generated from many random walks of a game using `pyplot` from `matplotlib`.
 
 `noughtsCrosses.py` contain the rules for the game of noughts and crosses: starting state; next player; rule for nextmove; evaluation function for board.
