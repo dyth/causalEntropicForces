@@ -64,6 +64,9 @@ def centreLight(light):
 
 print "matplotlib finished building"
 ax = plt.gca()
+ax.set_title("Game Tree expressed as a light cone")
+ax.set_xlabel("Position of move")
+ax.set_ylabel("Move No.")
 plt.ion()
 plt.show()
 while True:
