@@ -6,7 +6,7 @@ Noughts and Crosses was chosen because it was simple enough to implement, yet or
 
 `lightCone.py` plots a light cone graph generated from many random walks of a game using `pyplot` from `matplotlib`. On the Y-axis is the number of moves from the start.
 
-<img src="https://latex.codecogs.com/gif.latex?$$&space;\begin{array}{ccc}&space;1&space;&&space;2&space;&&space;3&space;\\&space;4&space;&&space;5&space;&&space;6&space;\\&space;7&space;&&space;8&space;&&space;9&space;\\&space;\end{array}&space;$$" title="$$ \begin{array}{ccc} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \\ \end{array} $$"/>
+<img src="https://latex.codecogs.com/gif.latex?\begin{array}{ccc}&space;0&space;&&space;1&space;&&space;2&space;\\&space;3&space;&&space;4&space;&&space;5&space;\\&space;6&space;&&space;7&space;&&space;8&space;\\&space;\end{array}" title="\begin{array}{ccc} 0 & 1 & 2 \\ 3 & 4 & 5 \\ 6 & 7 & 8 \\ \end{array}" />
 
 Using the above enumeration of a noughts and crosses board, a move is represented in a tree with a move on square i on the ith branch on the tree. All the paths start at a node representing the initially empty board.
 
