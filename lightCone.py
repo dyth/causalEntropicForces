@@ -35,18 +35,12 @@ def randomWalk(board, player, history):
         return randomWalk(board, nextPlayer(player), history)
 
 
-def permutation(k, n):
-    'return number of permutations of k in n'
-    return float(math.factorial(n)) / float(math.factorial(k))
-
-
 def historyToEncoding(light, history, i, j):
     'convert a history list of moves into light cone representation'
     if (len(light) == len(history)):
         return light
     else:
-        perm = permutation(j, 9)
-        light.append(float(light[-1]) + float(history[i])/perm)
+        light.append(float(light[-1]) + float(history[i])/(9 ** i))
         return historyToEncoding(light, history, i+1, j-1)
 
     
@@ -57,7 +51,7 @@ def enum(l):
 
 def centreLight(light):
     'centre the light cone around 0'
-    light = [light[i] + 1.0 / (2.0 * permutation(9-i, 9)) for i in enum(light)]
+    light = [light[i] + 1.0 / (2.0 * (9 ** i)) for i in enum(light)]
     return light
 
 
@@ -65,7 +59,7 @@ def centreLight(light):
 print "matplotlib finished building"
 ax = plt.gca()
 ax.set_title("Game Tree expressed as a light cone")
-ax.set_xlabel("Position of move")
+ax.axes.get_xaxis().set_visible(False)
 ax.set_ylabel("Move No.")
 plt.ion()
 plt.show()
