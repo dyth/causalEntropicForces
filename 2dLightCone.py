@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """create light cone frrahom all possible moves"""
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import random
 import math
 
@@ -19,20 +20,21 @@ def randomMove(player, board):
     x, y = randomCoordinates()
     newBoard = move(player, board, x, y)
     if (newBoard != None):
-        return newBoard, 3*x + y
+        return newBoard, x, y
     else:
         return randomMove(player, board)
 
 
-def randomWalk(board, player, history):
+def randomWalk(board, player, xs, ys):
     'take a random walk through the board'
     winner = evaluate(board)
-    if (winner != None or len(history) == len(board)):
-        return history, winner
+    if (winner != None or len(xs) == len(board)):
+        return xs, ys, winner
     else:
-        board, move = randomMove(player, board)
-        history.append(move)
-        return randomWalk(board, nextPlayer(player), history)
+        board, x, y = randomMove(player, board)
+        xs.append(x)
+        ys.append(y)
+        return randomWalk(board, nextPlayer(player), xs, ys)
 
 
 def historyToEncoding(light, history, i):
@@ -40,7 +42,7 @@ def historyToEncoding(light, history, i):
     if (len(light) == len(history)):
         return light
     else:
-        light.append(float(light[-1]) + float(history[i])/(9 ** i))
+        light.append(float(light[-1]) + float(history[i])/(3 ** i))
         return historyToEncoding(light, history, i+1)
 
     
@@ -51,23 +53,26 @@ def enum(l):
 
 def centreLight(light):
     'centre the light cone around 0'
-    light = [light[i] + 1.0 / (2.0 * (9 ** i)) for i in enum(light)]
+    light = [light[i] + 1.0 / (2.0 * (3 ** i)) for i in enum(light)]
     return light
 
 
 
 print "matplotlib finished building"
-ax = plt.gca()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 ax.set_title("Game Tree expressed as a light cone")
-ax.axes.get_xaxis().set_visible(False)
+#ax.axes.get_xaxis().set_visible(False)
 ax.set_ylabel("Move No.")
 plt.ion()
 plt.show()
 while True:
-    history, winner = randomWalk(initialBoard, 1, [0])
-    light = historyToEncoding([0], history, 1)
-    light = centreLight(light)
+    xs, ys, winner = randomWalk(initialBoard, 1, [0], [0])
+    xs = historyToEncoding([0], xs, 1)
+    ys = historyToEncoding([0], ys, 1)
+    xs = centreLight(xs)
+    ys = centreLight(ys)
     colour = 'g' if (winner == 1) else 'r'
-    ax.plot(light, enum(light), color=colour)
+    ax.plot(xs, ys, enum(xs), color=colour)
     plt.draw()
     plt.pause(0.05)
