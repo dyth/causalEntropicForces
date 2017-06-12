@@ -57,22 +57,21 @@ def centreLight(light):
     return light
 
 
-
-print "matplotlib finished building"
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.set_title("Game Tree expressed as a light cone")
-#ax.axes.get_xaxis().set_visible(False)
-ax.set_ylabel("Move No.")
-plt.ion()
-plt.show()
-while True:
-    xs, ys, winner = randomWalk(initialBoard, 1, [0], [0])
-    xs = historyToEncoding([0], xs, 1)
-    ys = historyToEncoding([0], ys, 1)
-    xs = centreLight(xs)
-    ys = centreLight(ys)
-    colour = 'g' if (winner == 1) else 'r'
-    ax.plot(xs, ys, enum(xs), color=colour)
-    plt.draw()
-    plt.pause(0.05)
+if __name__ == "__main__":
+    print "matplotlib finished building"
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_title("Game Tree expressed as a light cone")
+    ax.set_zlabel("Move No.")
+    plt.ion()
+    plt.show()
+    while True:
+        xs, ys, winner = randomWalk(initialBoard, 1, [0], [0])
+        xs = historyToEncoding([0], xs, 1)
+        ys = historyToEncoding([0], ys, 1)
+        xs = centreLight(xs)
+        ys = centreLight(ys)
+        colour = 'g' if (winner == 1) else 'r'
+        ax.plot(xs, ys, enum(xs), color=colour)
+        plt.draw()
+        plt.pause(0.01)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""create light cone frrahom all possible moves"""
+"""create light cone from all possible moves"""
 import matplotlib.pyplot as plt
 import random
 import math
@@ -70,4 +70,4 @@ while True:
     colour = 'g' if (winner == 1) else 'r'
     ax.plot(light, enum(light), color=colour)
     plt.draw()
-    plt.pause(0.05)
+    plt.pause(0.01)
