@@ -7,7 +7,7 @@ from lightCone2d import *
 
 print "matplotlib finished building"
 ax = plt.gca()
-ax.set_title("Sampling points for Kernel Density Estimation")
+ax.set_title("2d plot of leaf nodes of game tree")
 ax.set_xlabel("First Coordinate")
 ax.set_ylabel("Second Coordinate")
 plt.ion()
