@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """recreation of particle in a box example"""
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 from monteCarloPathSampling import *
 
@@ -23,27 +24,54 @@ def valid(walk, p):
 
 
 def reshape(walk):
-    'change from list of coordinates to something usable in pyplot'
+    'change from list of coordinates to list of ith coordinate'
     unfurled = [[] for _ in range(dims)]
     [unfurled[i].append(w[i]) for i in range(dims) for w in walk]
     return unfurled
 
-    
+
+
 print "matplotlib finished building"
-ax = plt.gca()
+
+plt.figure(1)
+ax = plt.gca(aspect = 'equal')
 ax.set_title("Particle in a 2 dimensional box")
+ax.set_xlim(bounds[0][0], bounds[0][1])
+ax.set_ylim(bounds[1][0], bounds[1][1])
+
+plt.figure(2)
+ax2 = plt.gca(aspect = 'equal')
+ax2.set_title("Endpoint plots")
+ax2.set_xlim(bounds[0][0], bounds[0][1])
+ax2.set_ylim(bounds[1][0], bounds[1][1])
+
+fig = plt.figure(3)
+ax3 = fig.add_subplot(111, projection='3d', aspect = 'equal')
+ax3.set_title("Light Cone")
+ax3.set_xlim(bounds[0][0], bounds[0][1])
+ax3.set_ylim(bounds[1][0], bounds[1][1])
+ax3.set_zlim(0, depth)
+
 plt.ion()
 plt.show()
-
-ax2 = plt.gca()
-ax2.set_title("Endpoint plots")
 
 while True:
      walk = randomWalk([start], depth, dims, stepSize, valid)
      graphLists = reshape(walk)
+     
      plt.figure(1)
      ax.plot(graphLists[0], graphLists[1])
+     
      plt.figure(2)
      plt.plot(graphLists[0][-1], graphLists[1][-1], "o")
+     
+     plt.figure(3)
+     ax3.plot(graphLists[0], graphLists[1], range(len(graphLists[0])))
+
+     
      plt.draw()
      plt.pause(0.01)
+"""
+
+monteCarloPathSampling(start, 1000, depth, dims, stepSize, valid)
+"""

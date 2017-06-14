@@ -60,7 +60,7 @@ def centreLight(light):
 if __name__ == "__main__":
     print "matplotlib finished building"
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    ax = fig.add_subplot(111, projection='3d', aspect = 'equal')
     ax.set_title("Game Tree expressed as a light cone")
     ax.set_zlabel("Move No.")
     plt.ion()

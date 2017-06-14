@@ -32,5 +32,7 @@ def randomWalk(walk, depth, dims, stepSize, valid):
 
 def monteCarloPathSampling(start, number, depth, dims, stepSize, valid):
     'do number of monte carlo random walks at depth'
+    points = []
     for _ in range(number):
-        walk = randomWalk([start], depth, dims, stepSize, valid)
+        points.append(randomWalk([start], depth, dims, stepSize, valid)[-1])
+    return points 
