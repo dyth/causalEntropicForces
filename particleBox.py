@@ -5,6 +5,7 @@ from numpy import array
 
 from monteCarloPathSampling import *
 from kde import *
+from agent import *
 
 
 # state variables
@@ -50,3 +51,4 @@ if __name__ == "__main__":
 
     dens1 = estimate(X, xmin, xmax, ymin, ymax, Nx, Ny)
     plot(dens1, xmin, xmax, ymin, ymax)
+    print dens1.T
