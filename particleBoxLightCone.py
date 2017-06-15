@@ -31,8 +31,10 @@ plt.show()
 
 while True:
      walk = randomWalk([start], depth, dims, stepSize, valid)
-     graphLists = reshape(walk)
-     
+
+     blank = [[] for _ in range(dims)]
+     graphLists = [blank[i].append(w[i]) for i in range(dims) for w in walk]
+
      plt.figure(1)
      ax.plot(graphLists[0], graphLists[1])
      
