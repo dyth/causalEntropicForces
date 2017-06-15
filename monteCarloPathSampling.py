@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 """module for Monte Carlo Path Sampling"""
-import random
+import random, math
 
 
 def randomStep(dims, stepSize):
     'do a valid step in a random walk'
     # create random vector, normalise, then multiply by step size
     step = [random.uniform(-1.0, 1.0) for _ in range(dims)]
-    magnitude = sum([i**2.0 for i in step])
+    magnitude = math.sqrt(sum([i**2.0 for i in step]))
     step = [stepSize * i / magnitude for i in step]
+    magnitude = sum([i**2.0 for i in step])
     return step
     
 

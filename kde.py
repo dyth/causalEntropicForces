@@ -23,7 +23,7 @@ def estimate(points, bounds, number):
     return [kde.fit(points).score(c).tolist() for c in cs], cs
 
 
-def plot(density, bounds, number):
+def plot(density, points, bounds, number):
     'plot points and KDE'
     plt.figure()
     ax = plt.gca(aspect = 'equal')
@@ -46,4 +46,4 @@ if __name__ == "__main__":
     points = array(points)
     number = [b[1] - b[0] for b in bounds]
     density, _ = estimate(points, bounds, number)
-    plot(density, bounds, number)
+    plot(density, points, bounds, number)
