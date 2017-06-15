@@ -20,7 +20,7 @@ def randomWalk(walk, depth, dims, stepSize, valid):
     else:
         # generate next step and add to current position
         step = randomStep(dims, stepSize)
-        point = [step[i] + walk[-1][i] for i in range(dims)]
+        point = [int(step[i] + walk[-1][i]) for i in range(dims)]
         if (not valid(walk, point)):
             # if invalid, do the computation again by recursion
             return randomWalk(walk, depth, dims, stepSize, valid)
@@ -32,7 +32,4 @@ def randomWalk(walk, depth, dims, stepSize, valid):
 
 def monteCarloPathSampling(start, number, depth, dims, stepSize, valid):
     'do number of monte carlo random walks at depth'
-    points = []
-    for _ in range(number):
-        points.append(randomWalk([start], depth, dims, stepSize, valid)[-1])
-    return points 
+    return [randomWalk([start], depth, dims, stepSize, valid)[-1] for _ in range(number)]
