@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""recreation of particle in a box example"""
+"""particle in a box which drifts towards the centre"""
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from numpy import array
 
 from monteCarloPathSampling import *
 from kde import *
+
 
 # state variables
 stepSize = 5.0
@@ -31,63 +31,22 @@ def reshape(walk):
     return unfurled
 
 
+if __name__ == "__main__":
+    X = monteCarloPathSampling(start, 100, depth, dims, stepSize, valid)
 
-print "matplotlib finished building"
-"""
-plt.figure(1)
-ax = plt.gca(aspect = 'equal')
-ax.set_title("Particle in a 2 dimensional box")
-ax.set_xlim(bounds[0][0], bounds[0][1])
-ax.set_ylim(bounds[1][0], bounds[1][1])
+    plt.figure()
+    ax = plt.gca(aspect = 'equal')
+    ax.set_title("KDE and points")
+    ax.set_xlim(bounds[0][0], bounds[0][1])
+    ax.set_ylim(bounds[1][0], bounds[1][1])
+    # strangely, after KDE, the axes have swapped, so plot points swapped round
+    [plt.plot(i[1], i[0], "o") for i in X]
 
-plt.figure(2)
-ax2 = plt.gca(aspect = 'equal')
-ax2.set_title("Endpoint plots")
-ax2.set_xlim(bounds[0][0], bounds[0][1])
-ax2.set_ylim(bounds[1][0], bounds[1][1])
+    X = array(X)
 
-fig = plt.figure(3)
-ax3 = fig.add_subplot(111, projection='3d', aspect = 'equal')
-ax3.set_title("Light Cone")
-ax3.set_xlim(bounds[0][0], bounds[0][1])
-ax3.set_ylim(bounds[1][0], bounds[1][1])
-ax3.set_zlim(0, depth)
+    xmin, xmax = bounds[0][0], bounds[0][1]
+    ymin, ymax = bounds[1][0], bounds[1][1]
+    Nx, Ny = xmax - xmin, ymax - ymin
 
-plt.ion()
-plt.show()
-
-while True:
-     walk = randomWalk([start], depth, dims, stepSize, valid)
-     graphLists = reshape(walk)
-     
-     plt.figure(1)
-     ax.plot(graphLists[0], graphLists[1])
-     
-     plt.figure(2)
-     plt.plot(graphLists[0][-1], graphLists[1][-1], "o")
-     
-     plt.figure(3)
-     ax3.plot(graphLists[0], graphLists[1], range(len(graphLists[0])))
-  
-     plt.draw()
-     plt.pause(0.01)
-"""
-
-X = monteCarloPathSampling(start, 100, depth, dims, stepSize, valid)
-print "Finished Monte Carlo Path Sampling"
-
-plt.figure()
-ax = plt.gca(aspect = 'equal')
-ax.set_title("KDE and points")
-ax.set_xlim(bounds[0][0], bounds[0][1])
-ax.set_ylim(bounds[1][0], bounds[1][1])
-# strangely, after KDE, the axes have swapped, so plot points swapped round
-[plt.plot(i[1], i[0], "o") for i in X]
-
-X = array(X)
-
-xmin, xmax, ymin, ymax = bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]
-Nx, Ny = xmax - xmin, ymax - ymin
-
-dens1 = estimate(X, xmin, xmax, ymin, ymax, Nx, Ny)
-plot(dens1, xmin, xmax, ymin, ymax)
+    dens1 = estimate(X, xmin, xmax, ymin, ymax, Nx, Ny)
+    plot(dens1, xmin, xmax, ymin, ymax)
