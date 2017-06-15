@@ -1,24 +1,8 @@
 #!/usr/bin/env python
 """perform kernel density estimation on 2D grid"""
-import numpy as np
-import warnings
-from numpy import array
-from scipy.spatial import cKDTree
-from scipy.stats import gaussian_kde
-from sklearn.neighbors import KernelDensity
-
-from monteCarloPathSampling import *
 from particleBox import *
-
-
-def estimate(X, bounds, number):
-    'return log of kernel density probability on 2 dimensions'
-    warnings.filterwarnings("ignore")
-    xs = np.linspace(bounds[0][0], bounds[0][1], number[0])
-    ys = np.linspace(bounds[1][0], bounds[1][1], number[1])
-    points = np.vstack(map(np.ravel, np.meshgrid(xs, ys))).T
-    kde = KernelDensity(5, kernel='gaussian')
-    return [kde.fit(X).score(point).tolist() for point in points], points
+from monteCarloPathSampling import *
+from kde import *
 
 
 def average(logProb, points, position):
@@ -32,7 +16,7 @@ def average(logProb, points, position):
 
 def steps(position, bounds, number):
     'calculate where the next step should be'
-    points = monteCarloPathSampling(start, 200, depth, dims, stepSize, valid)
+    points = monteCarloPathSampling(start, 100, depth, dims, stepSize, valid)
     points = array(points)
     logProb, allPoints = estimate(points, bounds, number)
     mean = average(logProb, allPoints, position)
@@ -42,9 +26,16 @@ def steps(position, bounds, number):
 
 
 def forcing(position, bounds, steps, dims):
+    'move particle according to force for steps'
     number = [b[1] - b[0] for b in bounds]
-    move = steps(position, bounds, number)
-    position = [position[i] += move[i] for i in range(dims))]
+    history = []
+    for _ in range(steps):
+        move = steps(position, bounds, number)
+        position = [position[i] + move[i] for i in range(dims)]
+        history.append(position)
+    return history
 
-
-forcing(start, 100, 100, dims)
+        
+#forcing(start, bounds, 100, dims)
+number = [b[1] - b[0] for b in bounds]
+print steps(start, bounds, number)
