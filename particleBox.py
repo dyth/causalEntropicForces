@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from numpy import array
 
 from monteCarloPathSampling import *
-from kde import *
 from agent import *
 
 
@@ -40,8 +39,6 @@ if __name__ == "__main__":
     ax.set_title("KDE and points")
     ax.set_xlim(bounds[0][0], bounds[0][1])
     ax.set_ylim(bounds[1][0], bounds[1][1])
-    # strangely, after KDE, the axes have swapped, so plot points swapped round
-    [plt.plot(i[1], i[0], "o") for i in X]
 
     X = array(X)
 
@@ -49,6 +46,4 @@ if __name__ == "__main__":
     ymin, ymax = bounds[1][0], bounds[1][1]
     Nx, Ny = xmax - xmin, ymax - ymin
 
-    dens1 = estimate(X, xmin, xmax, ymin, ymax, Nx, Ny)
-    plot(dens1, xmin, xmax, ymin, ymax)
-    print dens1.T
+    logProb = estimate(X, xmin, xmax, ymin, ymax, Nx, Ny)
