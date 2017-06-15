@@ -3,8 +3,6 @@
 from numpy import array
 
 # state variables
-stepSize = 5.0
-depth = 20
 start = [-50.0, 0.0]
 bounds = ((-100.0, 200.0), (-100.0, 100.0))
 dims = len(bounds)

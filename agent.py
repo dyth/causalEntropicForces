@@ -1,29 +1,30 @@
 #!/usr/bin/env python
 """perform kernel density estimation on 2D grid"""
 import math
+from numpy import array
 from particleBox import *
 from monteCarloPathSampling import *
 from kde import *
 
+# state variables
+stepSize, depth = 5.0, 100
 
 def average(logProb, points, position):
     'take weighted average of logProb and points offset to find mean outcome'
     mean = array([0.0, 0.0])
-    points = [point - position for point in points]
+    points = array([point - position for point in points])
     for index in range(len(points)):
         mean += logProb[index] * points[index]
-    return mean#[m / float(len(points)) for m in mean]
+    return [m / float(len(points)) for m in mean]
     
 
 def force(position, bounds, number, stepSize):
     'calculate where the next step should be'
     points = monteCarloPathSampling(start, 100, depth, dims, stepSize, valid)
-    points = array(points)
     logProb, allPoints = estimate(points, bounds, number)
     move = average(logProb, allPoints, position)
     magnitude = math.sqrt(sum([m**2.0 for m in move]))
-    move = [-stepSize * m / magnitude for m in move]
-    return move
+    return [-stepSize * m / magnitude for m in move]
 
 
 def forcing(position, bounds, steps, stepSize, dims):
