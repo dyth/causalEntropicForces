@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""perform kernel density estimation on noughts and crosses"""
+"""perform kernel density estimation"""
 import numpy as np
 import warnings
 from numpy import array
@@ -8,9 +8,6 @@ from matplotlib.colors import LogNorm
 from scipy.spatial import cKDTree
 from scipy.stats import gaussian_kde
 from sklearn.neighbors import KernelDensity
-
-from monteCarloPathSampling import *
-from particleBox import *
 
 
 def estimate(points, bounds, number):
@@ -23,27 +20,10 @@ def estimate(points, bounds, number):
     return [kde.fit(points).score(c).tolist() for c in cs], cs
 
 
-def plot(density, points, bounds, number):
-    'plot points and KDE'
-    plt.figure()
-    ax = plt.gca(aspect = 'equal')
-    ax.set_title("KDE and points")
-    ax.set_xlim(bounds[0][0], bounds[0][1])
-    ax.set_ylim(bounds[1][0], bounds[1][1])
-    # plot visted points
-    for point in points:
-        plt.plot(point[0], point[1], "o")
-    extent = (bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1])
-    # plot density
-    density = array(density).reshape(tuple(reversed(number)))
-    ax.imshow(density, origin='lower', extent=extent, cmap=plt.cm.binary)
-    plt.show()
-
-
-    
-if __name__ == "__main__":
-    points = monteCarloPathSampling(start, 100, 100, dims, 5, valid)
-    points = array(points)
-    number = [b[1] - b[0] for b in bounds]
-    density, _ = estimate(points, bounds, number)
-    plot(density, points, bounds, number)
+def average(logProb, cs, position):
+    'take weighted average of logProb and points offset to find mean outcome'
+    mean = array([0.0, 0.0])
+    points = array([c - position for c in cs])
+    for index in range(len(cs)):
+        mean += logProb[index] * cs[index]
+    return [m / float(len(points)) for m in mean]

@@ -1,2 +1,3 @@
 *.pyc 
 .#*
+memoisedOutput.py

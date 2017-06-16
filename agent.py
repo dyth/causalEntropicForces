@@ -1,28 +1,22 @@
 #!/usr/bin/env python
-"""perform kernel density estimation on 2D grid"""
+"""perform causal entropic forces on context"""
 import math
-from numpy import array
+import matplotlib.pyplot as plt
+
 from particleBox import *
 from monteCarloPathSampling import *
 from kde import *
 
-# state variables
-stepSize, depth = 5.0, 400
 
-def average(logProb, points, position):
-    'take weighted average of logProb and points offset to find mean outcome'
-    mean = array([0.0, 0.0])
-    points = array([point - position for point in points])
-    for index in range(len(points)):
-        mean += logProb[index] * points[index]
-    return [m / float(len(points)) for m in mean]
+# state variables
+stepSize, depth, samples, reps = 5.0, 20, 50, 1
     
 
-def force(position, bounds, number, stepSize):
+def force(pos, bounds, number, stepSize):
     'calculate where the next step should be'
-    points = monteCarloPathSampling(position, 400, depth, dims, stepSize, valid)
-    logProb, allPoints = estimate(points, bounds, number)
-    move = average(logProb, allPoints, position)
+    points = monteCarloPathSampling(pos, samples, depth, dims, stepSize, valid)
+    logProb, coords = estimate(points, bounds, number)
+    move = average(logProb, coords, pos)
     magnitude = math.sqrt(sum([m**2.0 for m in move]))
     return [-stepSize * m / magnitude for m in move]
 
@@ -40,14 +34,13 @@ def forcing(position, bounds, steps, stepSize, dims):
 
 
 
-path = forcing(start, bounds, 100, stepSize, dims)
-graphLists = [[] for _ in range(dims)]
-[graphLists[i].append(p[i]) for i in range(dims) for p in path]
+path = forcing(start, bounds, reps, stepSize, dims)
+path = [[p[i] for p in path] for i in range(dims)]
 
 plt.figure()
 ax = plt.gca(aspect = 'equal')
 ax.set_title("Particle in a 2 dimensional box")
 ax.set_xlim(bounds[0][0], bounds[0][1])
 ax.set_ylim(bounds[1][0], bounds[1][1])
-ax.plot(graphLists[0], graphLists[1], linewidth=0.1, color='k')
+ax.plot(path[0], path[1], linewidth=0.1, color='k')
 plt.show()
