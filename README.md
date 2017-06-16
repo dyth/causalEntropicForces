@@ -2,6 +2,20 @@
 
 Code is based on the algorithm described [this paper](http://math.mit.edu/~freer/papers/PhysRevLett_110-168702.pdf). The underlying idea is substantiated with pseudocode examples in the [supplementary material](https://journals.aps.org/prl/supplemental/10.1103/PhysRevLett.110.168702), which form the basis of this repository.
 
+## Prerequisites
+
+Python libraries: `numpy`, `matplotlib`, `scipy`
+
+## Agent
+
+There are three stages in the agent and are found in `monteCarloPathSampling.py`, `agent.py` and `kde.py`. To run the agent with the Particle in a Box example, do `$ python agent.py`. First, `agent.py` calls `monteCarloPathSampling.py`, which stochastically calculates many random walks which are then used to estimate the density of the state space in `kde.py`, which uses the scikit-learn implementation of kernel density estimation. The sum over all possible moves is weighted with the log-likelihood of the KDE estimated probability to find the most probable direction that a randomised process would end up. A step in the opposite direction is thus taken.
+
+## Particle in a Box
+
+`particleBox.py` contains information about the simulation. It has a start state, a boundary and a `valid` function to determine if the next move is valid or not.
+
+## Noughts and Crosses
+
 Noughts and Crosses was chosen because it was simple enough to implement, yet orthogonal to the other examples in the supplementary material because it has a well-defined goal state.
 
 `lightCone.py` plots a 2 dimensional light cone graph generated from many random walks of a game using `pyplot` from `matplotlib`. On the Y-axis is the number of moves from the start.
