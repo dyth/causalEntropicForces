@@ -14,6 +14,15 @@ There are three stages in the agent and are found in `monteCarloPathSampling.py`
 
 `particleBox.py` contains information about the simulation. It has a start state, a boundary and a `valid` function to determine if the next move is valid or not.
 
+Running `particleBoxAgentPlot.py` produces the following graphs animated with real-time updates for every step.
+
+![path](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/path.png)
+
+![2DPaths](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DPaths.png)
+![2DPoints](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DPoints.png)
+![2DPointsKDE](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DPointsKDE.png)
+![2DCone](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DCone.png)
+
 ## Noughts and Crosses
 
 Noughts and Crosses was chosen because it was simple enough to implement, yet orthogonal to the other examples in the supplementary material because it has a well-defined goal state.
