@@ -42,7 +42,7 @@ def plot(density, points, bounds, number):
 
     
 if __name__ == "__main__":
-    points = monteCarloPathSampling(start, 100, depth, dims, stepSize, valid)
+    points = monteCarloPathSampling(start, 100, 100, dims, 5, valid)
     points = array(points)
     number = [b[1] - b[0] for b in bounds]
     density, _ = estimate(points, bounds, number)

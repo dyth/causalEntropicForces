@@ -7,7 +7,7 @@ from monteCarloPathSampling import *
 from kde import *
 
 # state variables
-stepSize, depth = 5.0, 100
+stepSize, depth = 5.0, 400
 
 def average(logProb, points, position):
     'take weighted average of logProb and points offset to find mean outcome'
@@ -20,7 +20,7 @@ def average(logProb, points, position):
 
 def force(position, bounds, number, stepSize):
     'calculate where the next step should be'
-    points = monteCarloPathSampling(start, 100, depth, dims, stepSize, valid)
+    points = monteCarloPathSampling(position, 400, depth, dims, stepSize, valid)
     logProb, allPoints = estimate(points, bounds, number)
     move = average(logProb, allPoints, position)
     magnitude = math.sqrt(sum([m**2.0 for m in move]))
@@ -33,7 +33,7 @@ def forcing(position, bounds, steps, stepSize, dims):
     path = []
     for j in range(steps):
         move = force(position, bounds, number, stepSize)
-        position = [int(position[i] + move[i]) for i in range(dims)]
+        position = [position[i] + move[i] for i in range(dims)]
         path.append(position)
         print "moved", move, j, "steps, now at", position
     return path
@@ -41,8 +41,8 @@ def forcing(position, bounds, steps, stepSize, dims):
 
 
 path = forcing(start, bounds, 100, stepSize, dims)
-blank = [[] for _ in range(dims)]
-graphLists = [blank[i].append(p[i]) for i in range(dims) for p in path]
+graphLists = [[] for _ in range(dims)]
+[graphLists[i].append(p[i]) for i in range(dims) for p in path]
 
 plt.figure()
 ax = plt.gca(aspect = 'equal')

@@ -3,8 +3,8 @@
 from numpy import array
 
 # state variables
-start = [-50.0, 0.0]
-bounds = ((-100.0, 200.0), (-100.0, 100.0))
+start = [-400.0, 20.0]
+bounds = ((-500.0, 500.0), (-100.0, 100.0))
 dims = len(bounds)
 
 
