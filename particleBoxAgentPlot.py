@@ -11,7 +11,8 @@ from kde import *
 
 
 # state variables and basic setup of the graphs
-stepSize, depth, samples, steps = 5.0, 20, 50, 1
+stepSize, depth, samples, steps = 5.0, 400, 400, 2
+im = False # make True if you want to save images
 
 plt.ion()
 plt.show()
@@ -34,6 +35,11 @@ def force(pos, bounds, number, stepSize, ax, ax2, ax3):
         ax3.plot(walk[0], walk[1], range(len(walk[0])))
         plt.draw()
         plt.pause(0.005)
+
+    if im:
+        plt.figure(2)
+        plt.savefig('images/2DPoints.png', dpi=900)
+        
     # calculate the next step
     logProb, coords = estimate(points, bounds, number)
     move = average(logProb, coords, pos)
@@ -69,15 +75,24 @@ def forcing(position, bounds, steps, stepSize, dims):
 
         fig = plt.figure(3)
         plt.clf()
-        ax3 = fig.add_subplot(111, projection='3d')
-        ax3.set_title("Light Cone", aspect = 'equal')
-        ax3.set_zlim(0, depth)
+        ax3 = fig.add_subplot(111, projection='3d', aspect = 'equal')
+        ax3.set_title("Light Cone")
+        #ax3.set_zlim(0, depth)
 
         move = force(position, bounds, number, stepSize, ax, ax2, ax3)
         position = [position[i] + move[i] for i in range(dims)]
         path.append(position)
         
         print "moved", move, j, "steps, now at", position
+
+        if im:
+            plt.figure(1)
+            plt.savefig('images/2DPaths.png', dpi=900)
+            plt.figure(2)
+            plt.savefig('images/2DPointsKDE.png', dpi=900)
+            plt.figure(3)
+            plt.savefig('images/2DCone.png', dpi=900)
+        
         raw_input("Press ENTER to advance to next move")
     return path
 
@@ -86,7 +101,8 @@ def forcing(position, bounds, steps, stepSize, dims):
 path = forcing(start, bounds, steps, stepSize, dims)
 path = [[p[i] for p in path] for i in range(dims)]
 
-plt.figure()
+plt.figure(1)
+plt.clf()
 ax = plt.gca(aspect = 'equal')
 ax.set_title("Particle in a 2 dimensional box")
 ax.set_xlim(bounds[0][0], bounds[0][1])
