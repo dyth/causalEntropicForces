@@ -9,7 +9,7 @@ from kde import *
 
 
 # state variables
-stepSize, depth, samples, reps = 5.0, 20, 50, 1
+stepSize, depth, samples, steps = 5.0, 20, 50, 1
     
 
 def force(pos, bounds, number, stepSize):
@@ -34,7 +34,7 @@ def forcing(position, bounds, steps, stepSize, dims):
 
 
 
-path = forcing(start, bounds, reps, stepSize, dims)
+path = forcing(start, bounds, steps, stepSize, dims)
 path = [[p[i] for p in path] for i in range(dims)]
 
 plt.figure()

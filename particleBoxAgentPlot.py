@@ -11,36 +11,19 @@ from kde import *
 
 
 # state variables and basic setup of the graphs
-stepSize, depth, samples, reps = 5.0, 20, 50, 1
-
-plt.figure(1)
-ax = plt.gca(aspect = 'equal')
-ax.set_title("Particle in a 2 dimensional box")
-ax.set_xlim(bounds[0][0], bounds[0][1])
-ax.set_ylim(bounds[1][0], bounds[1][1])
-
-plt.figure(2)
-ax2 = plt.gca(aspect = 'equal')
-ax2.set_title("Endpoint plots")
-ax2.set_xlim(bounds[0][0], bounds[0][1])
-ax2.set_ylim(bounds[1][0], bounds[1][1])
-
-ax3 = plt.figure(3).add_subplot(111, projection='3d')
-ax3.set_title("Light Cone")
-ax3.set_xlim(bounds[0][0], bounds[0][1])
-ax3.set_ylim(bounds[1][0], bounds[1][1])
-ax3.set_zlim(0, depth)
+stepSize, depth, samples, steps = 5.0, 20, 50, 2
 
 plt.ion()
 plt.show()
 
 
-def force(position, bounds, number, stepSize):
+def force(pos, bounds, number, stepSize, ax, ax2, ax3):
     'calculate where the next step should be'
+    points = []
     for _ in range(samples):
         # do random walks and append to lists for plotting
-        walk = randomWalk([position], depth, dims, stepSize, valid)
-        walks.append(path[-1])
+        walk = randomWalk([pos], depth, dims, stepSize, valid)
+        points.append(walk[-1])
         walk = [[w[i] for w in walk] for i in range(dims)]
         # plot lines and points on graph
         plt.figure(1)
@@ -50,18 +33,19 @@ def force(position, bounds, number, stepSize):
         plt.figure(3)
         ax3.plot(walk[0], walk[1], range(len(walk[0])))
         plt.draw()
-        plt.pause(0.01)
-    # perform kernel density estimation and plot on graph with points
-    logProb, allPoints = estimate(walks, bounds, number)
+        plt.pause(0.005)
+    # calculate the next step
+    logProb, coords = estimate(points, bounds, number)
+    move = average(logProb, coords, pos)
+    magnitude = math.sqrt(sum([m**2.0 for m in move]))
+    move = [-stepSize * m / magnitude for m in move]
+    # plot kernel density estimation on graph with points
     logProb = array(logProb).reshape(tuple(reversed(number)))
     plt.figure(2)
     extent = (bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1])
     ax2.imshow(logProb, origin='lower', extent=extent, cmap=plt.cm.binary)
     plt.draw()
-    # calculate the next step
-    move = average(logProb, coords, pos)
-    magnitude = math.sqrt(sum([m**2.0 for m in move]))
-    return [-stepSize * m / magnitude for m in move]
+    return move
 
 
 def forcing(position, bounds, steps, stepSize, dims):
@@ -69,7 +53,27 @@ def forcing(position, bounds, steps, stepSize, dims):
     number = [b[1] - b[0] for b in bounds]
     path = []
     for j in range(steps):
-        move = force(position, bounds, number, stepSize)
+        plt.figure(1)
+        plt.clf()
+        ax = plt.gca(aspect = 'equal')
+        ax.set_title("Particle in a 2 dimensional box")
+        ax.set_xlim(bounds[0][0], bounds[0][1])
+        ax.set_ylim(bounds[1][0], bounds[1][1])
+
+        plt.figure(2)
+        plt.clf()
+        ax2 = plt.gca(aspect = 'equal')
+        ax2.set_title("Endpoint plots")
+        ax2.set_xlim(bounds[0][0], bounds[0][1])
+        ax2.set_ylim(bounds[1][0], bounds[1][1])
+
+        fig = plt.figure(3)
+        plt.clf()
+        ax3 = fig.add_subplot(111, projection='3d')
+        ax3.set_title("Light Cone")
+        ax3.set_zlim(0, depth)
+
+        move = force(position, bounds, number, stepSize, ax, ax2, ax3)
         position = [position[i] + move[i] for i in range(dims)]
         path.append(position)
         print "moved", move, j, "steps, now at", position
@@ -79,7 +83,7 @@ def forcing(position, bounds, steps, stepSize, dims):
 
 
 
-path = forcing(start, bounds, reps, stepSize, dims)
+path = forcing(start, bounds, steps, stepSize, dims)
 path = [[p[i] for p in path] for i in range(dims)]
 
 plt.figure()
