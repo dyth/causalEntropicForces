@@ -11,7 +11,7 @@ from kde import *
 
 
 # state variables and basic setup of the graphs
-stepSize, depth, samples, steps = 5.0, 20, 50, 2
+stepSize, depth, samples, steps = 5.0, 20, 50, 1
 
 plt.ion()
 plt.show()
@@ -70,15 +70,15 @@ def forcing(position, bounds, steps, stepSize, dims):
         fig = plt.figure(3)
         plt.clf()
         ax3 = fig.add_subplot(111, projection='3d')
-        ax3.set_title("Light Cone")
+        ax3.set_title("Light Cone", aspect = 'equal')
         ax3.set_zlim(0, depth)
 
         move = force(position, bounds, number, stepSize, ax, ax2, ax3)
         position = [position[i] + move[i] for i in range(dims)]
         path.append(position)
+        
         print "moved", move, j, "steps, now at", position
-        # press enter to go to next graph
-        raw_input()
+        raw_input("Press ENTER to advance to next move")
     return path
 
 
@@ -93,3 +93,4 @@ ax.set_xlim(bounds[0][0], bounds[0][1])
 ax.set_ylim(bounds[1][0], bounds[1][1])
 ax.plot(path[0], path[1], linewidth=0.1, color='k')
 plt.show()
+raw_input("Press ENTER to quit")
