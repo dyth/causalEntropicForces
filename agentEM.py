@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""perform causal entropic forces on context"""
+"""perform causal entropic forces on context using expectation maximisation"""
 import math
 import matplotlib.pyplot as plt
 
