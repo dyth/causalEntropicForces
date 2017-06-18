@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""module for Monte Carlo Path Sampling"""
+"""stochastic path sampling with markov chain probability output"""
 import random, math
 
 
