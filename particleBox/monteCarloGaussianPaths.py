@@ -14,7 +14,7 @@ def randomWalk(walk, depth, dims, timeStep, delta, valid):
     """
     float delta : amount travelled per step. delta = sqrt(VAR/t)
     """
-    if (depth == 0):
+    if depth == 0:
         # base case
         return walk
     else:
@@ -22,7 +22,7 @@ def randomWalk(walk, depth, dims, timeStep, delta, valid):
         step = randomStep(dims, delta, timeStep)
         point = [int(step[i] + walk[-1][i]) for i in range(dims)]
         # if invalid, do the computation again by recursion otherwise descend
-        if (not valid(walk, point)):
+        if not valid(walk, point):
             return randomWalk(walk, depth, dims, timeStep, delta, valid)
         else:
             walk.append(point)
