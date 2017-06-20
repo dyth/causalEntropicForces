@@ -8,6 +8,8 @@ Python libraries: `numpy`, `matplotlib`, `scipy`
 
 ## Agent
 
+The directory `particleBoxApproximations` contain an approximation of the algorithm described in the above paper which optimises computation speed at the expense of accuracy in physical units.
+
 There are three stages in the agent and are found in `monteCarloPathSampling.py`, `agent.py` and `kde.py`. To run the agent with the Particle in a Box example, do `$ python agent.py`. First, `agent.py` calls `monteCarloPathSampling.py`, which stochastically calculates many random walks which are then used to estimate the density of the state space in `kde.py`, which uses the scikit-learn implementation of kernel density estimation. The sum over all possible moves is weighted with the log-likelihood of the KDE estimated probability to find the most probable direction that a randomised process would end up. A step in the opposite direction is thus taken.
 
 `agentEM.py` and `kdeEM.py` combine an agent with an expectation-maximsation algorithm, such that the agent now advances to the sample mean of the stochastic walks obtained from kernel density estimation. `agentEMWLLN.py` achieves this at a faster rate using the weak law of large numbers on a weighted mean of the endpoints of each random walk.
