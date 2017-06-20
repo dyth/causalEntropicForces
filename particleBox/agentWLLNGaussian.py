@@ -9,12 +9,14 @@ from kdeEM import *
 
 
 # state variables
-stepSize, depth, samples, steps, delta = 5.0, 400, 400, 100, 5.0
+stepSize, depth, samples, steps, delta = 5.0, 400, 400, 10, 5.0
 
 
 def force(pos, stepSize):
     'calculate where the next step should be with mean of all samples'
-    ps = monteCarloGaussianPaths(pos, samples, depth, dims, stepSize, delta, valid)
+    scale = delta*sqrt(timeStep)
+    config = configuration(depth, dims, scale, valid)
+    ps = monteCarloGaussianPaths(pos, samples, config)
     return [sum([float(p[i]) for p in ps]) / len(ps) for i in range(dims)]
 
 

@@ -1,37 +1,48 @@
 #!/usr/bin/env python
 """module for Monte Carlo Path Sampling"""
-import random, math
 from math import sqrt
 from scipy.stats import norm
 
 
-def randomStep(dims, delta, timeStep):
-    'generate piecewise continous gaussian step'
-    return norm.rvs(size=dims, scale=delta*sqrt(timeStep))
+class configuration:
+    'struct preventing sesquipedalian function arguments'
+    def __init__(self, depth, dims, scale, valid):
+        self.depth = depth 
+        self.dims = dims
+        self.scale = scale
+        self.valid = valid
 
 
-def randomWalk(walk, depth, dims, timeStep, delta, valid):
-    """
-    float delta : amount travelled per step. delta = sqrt(VAR/t)
-    """
+        
+def randomStep(dims, scale):
+    'generate piecewise continous Gaussian step'
+    return norm.rvs(size=dims, scale=scale)
+
+
+# TODO: TRANSLATE INTO NUMPY
+
+def randomWalk(walk, config):
+    'Monte Carlo random walk returning list of coordinates and '
     if depth == 0:
         # base case
         return walk
     else:
         # generate next step and add to current position
-        step = randomStep(dims, delta, timeStep)
+        step = randomStep(config.dims, config.scale)
         point = [int(step[i] + walk[-1][i]) for i in range(dims)]
         # if invalid, do the computation again by recursion otherwise descend
         if not valid(walk, point):
-            return randomWalk(walk, depth, dims, timeStep, delta, valid)
+            return randomWalk(walk, config)
         else:
             walk.append(point)
-            return randomWalk(walk, depth-1, dims, timeStep, delta, valid)
+            config.depth -= 1
+            return randomWalk(walk, config)
 
-
-def monteCarloGaussianPaths(start, number, depth, dims, timeStep, delta, valid):
+        
+def monteCarloGaussianPaths(start, number, config):
     'do number of monte carlo random walks at depth'
     walks = []
+    # delta = sqrt(VAR/t)
     for _ in range(number):
-        walks.append(randomWalk([start], depth, dims, timeStep, delta, valid)[-1])
+        walks.append(randomWalk([start], config)[-1])
     return walks
