@@ -11,7 +11,7 @@ delta = 0.25
 # Total time.
 T = 10.0
 # Number of steps.
-N = 500
+N = 10
 # Time step size
 dt = T/N
 # Initial values of x.
@@ -29,8 +29,7 @@ plot(x[0,-1], x[1,-1], 'ro')
 
 # More plot decorations.
 title('2D Brownian Motion')
-xlabel('x', fontsize=16)
-ylabel('y', fontsize=16)
+xlabel('x')
+ylabel('y')
 axis('equal')
-grid(True)
 show()
