@@ -40,7 +40,7 @@ def force(pos, bounds, number, stepSize, ax, ax2, ax3):
 
     if im:
         plt.figure(2)
-        plt.savefig('images/2DPoints.png', dpi=900)
+        plt.savefig('../images/2DPoints.png', dpi=900)
         
     # calculate the next step
     logProb, coords = estimate(points, bounds, number)
@@ -89,11 +89,11 @@ def forcing(position, bounds, steps, stepSize, dims):
 
         if im:
             plt.figure(1)
-            plt.savefig('images/2DPaths.png', dpi=900)
+            plt.savefig('../images/2DPaths.png', dpi=900)
             plt.figure(2)
-            plt.savefig('images/2DPointsKDE.png', dpi=900)
+            plt.savefig('../images/2DPointsKDE.png', dpi=900)
             plt.figure(3)
-            plt.savefig('images/2DCone.png', dpi=900)
+            plt.savefig('../images/2DCone.png', dpi=900)
         
         raw_input("Press ENTER to advance to next move")
     return path
