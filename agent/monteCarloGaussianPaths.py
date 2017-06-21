@@ -8,37 +8,33 @@ import copy
 
 class configuration:
     'struct preventing sesquipedalian function arguments'
-    def __init__(self, depth, dims, scale, valid):
+    def __init__(self, depth, dims, stdev, valid):
         self.depth = depth 
         self.dims = dims
-        self.scale = scale
+        self.stdev = stdev
         self.valid = valid
 
 
+# TODO: ADD GAUSSIAN PROBABILITIES
         
-def randomStep(dims, scale):
+def randomStep(dist, dims):
     'generate piecewise continous Gaussian step'
-    return norm.rvs(size=dims, scale=scale)
+    return dist.rvs(size=dims)
 
-
-# TODO: TRANSLATE INTO NUMPY
 
 def randomWalk(walk, config):
-    'Monte Carlo random walk returning list of coordinates and '
+    'return list of Monte Carlo Weiner Process coordinates by recursion'
+    # base case at 0, otherwise generate
     if config.depth == 0:
-        # base case
         return walk
     else:
-        # generate next step and add to current position
-        step = randomStep(config.dims, config.scale)
-        point = [int(step[i] + walk[-1][i]) for i in range(config.dims)]
-        # if invalid, do the computation again by recursion otherwise descend
-        if not config.valid(walk, point):
-            return randomWalk(walk, config)
-        else:
+        dist = norm(0.0, config.stdev)
+        point = randomStep(dist, config.dims) + walk[-1]
+        # if valid descend else redo
+        if config.valid(walk, point):
             walk.append(point)
             config.depth -= 1
-            return randomWalk(walk, config)
+        return randomWalk(walk, config)
 
         
 def monteCarloGaussianPaths(start, number, config):

@@ -2,6 +2,7 @@
 """causal entropic forces using the weak law of large numbers"""
 import math, sys, os
 import matplotlib.pyplot as plt
+import numpy as np
 
 from monteCarloGaussianPaths import *
 
@@ -16,19 +17,19 @@ stepSize, depth, samples, steps, delta = 5.0, 400, 400, 10, 5.0
 def force(pos, timeStep):
     'calculate where the next step should be with mean of all samples'
     # delta = sqrt(VAR/t)
-    scale = delta*sqrt(timeStep)
-    config = configuration(depth, dims, scale, valid)
+    stdev = delta*sqrt(timeStep)
+    config = configuration(depth, dims, stdev, valid)
     ps = monteCarloGaussianPaths(pos, samples, config)
     return [sum([float(p[i]) for p in ps]) / len(ps) for i in range(dims)]
 
 
-def forcing(position, steps, stepSize):
+def forcing(pos, steps, stepSize):
     'return path taken by forcing of particle'
     path = []
     for j in range(steps):
-        position = force(position, stepSize)
-        path.append(position)
-        print "moved", j, "steps, now at", position
+        pos = force(np.array(pos), stepSize)
+        path.append(pos)
+        print "moved", j, "steps, now at", pos
     return path
 
 
