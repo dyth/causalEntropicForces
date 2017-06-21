@@ -1,45 +1,46 @@
 #!/usr/bin/env python
 """module for Monte Carlo Path Sampling"""
-from math import sqrt
+import math
 from scipy.stats import norm
 import numpy as np
-import copy
 
 
 class configuration:
-    'struct preventing sesquipedalian function arguments'
-    def __init__(self, depth, dims, stdev, valid):
-        self.depth = depth 
+    'class prevents sesquipedalian invocations'
+    
+    def __init__(self, dims, stdev, valid):
         self.dims = dims
-        self.stdev = stdev
         self.valid = valid
+        self.dist = norm(0.0, stdev)
 
-
-# TODO: ADD GAUSSIAN PROBABILITIES
         
-def randomStep(dist, dims):
-    'generate piecewise continous Gaussian step'
-    return dist.rvs(size=dims)
+    def randomStep(self, pos):
+        'generate piecewise continuous Gaussian step and its probability'
+        point = self.dist.rvs(size=self.dims)
+        return pos + point, self.dist.logpdf(point)
 
 
-def randomWalk(walk, config):
+
+def randomWalk(walk, logProb, config, depth):
     'return list of Monte Carlo Weiner Process coordinates by recursion'
     # base case at 0, otherwise generate
-    if config.depth == 0:
-        return walk
+    if depth == 0:
+        print logProb
+        return walk[-1], logProb
     else:
-        dist = norm(0.0, config.stdev)
-        point = randomStep(dist, config.dims) + walk[-1]
+        point, p = config.randomStep(walk[-1])
         # if valid descend else redo
         if config.valid(walk, point):
+            logProb += p
+            #print logProb
             walk.append(point)
-            config.depth -= 1
-        return randomWalk(walk, config)
+            depth -= 1
+        return randomWalk(walk, logProb, config, depth)
 
         
-def monteCarloGaussianPaths(start, number, config):
+def monteCarloGaussianPaths(start, number, config, depth):
     'do number of monte carlo random walks at depth'
     walks = []
     for _ in range(number):
-        walks.append(randomWalk([start], copy.deepcopy(config))[-1])
+        walks.append(randomWalk([start], 0.0, config, depth)[0])
     return walks

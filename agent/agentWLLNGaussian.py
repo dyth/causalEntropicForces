@@ -17,9 +17,9 @@ stepSize, depth, samples, steps, delta = 5.0, 400, 400, 10, 5.0
 def force(pos, timeStep):
     'calculate where the next step should be with mean of all samples'
     # delta = sqrt(VAR/t)
-    stdev = delta*sqrt(timeStep)
-    config = configuration(depth, dims, stdev, valid)
-    ps = monteCarloGaussianPaths(pos, samples, config)
+    stdev = delta * math.sqrt(timeStep)
+    config = configuration(dims, stdev, valid)
+    ps = monteCarloGaussianPaths(pos, samples, config, depth)
     return [sum([float(p[i]) for p in ps]) / len(ps) for i in range(dims)]
 
 
