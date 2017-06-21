@@ -6,6 +6,9 @@ import math
 
 from noughtsCrosses import *
 
+# state variables
+number, im = 100, True
+
 
 def randomCoordinates():
     'return 2-tuple of random numbers between 0 and 2'
@@ -63,7 +66,7 @@ ax.axes.get_xaxis().set_visible(False)
 ax.set_ylabel("Move No.")
 plt.ion()
 plt.show()
-while True:
+for _ in range(number):
     history, winner = randomWalk(initialBoard, 1, [0])
     light = historyToEncoding([0], history, 1)
     light = centreLight(light)
@@ -71,3 +74,6 @@ while True:
     ax.plot(light, enum(light), color=colour)
     plt.draw()
     plt.pause(0.01)
+
+if im:
+    plt.savefig('../images/noughtsCrosses.png', dpi=900)

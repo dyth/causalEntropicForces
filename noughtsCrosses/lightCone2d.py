@@ -7,6 +7,9 @@ import math
 
 from noughtsCrosses import *
 
+# state variables
+number, im = 100, True
+
 
 def randomCoordinates():
     'return 2-tuple of random numbers between 0 and 2'
@@ -65,7 +68,7 @@ if __name__ == "__main__":
     ax.set_zlabel("Move No.")
     plt.ion()
     plt.show()
-    while True:
+    for _ in range(number):
         xs, ys, winner = randomWalk(initialBoard, 1, [0], [0])
         xs = historyToEncoding([0], xs, 1)
         ys = historyToEncoding([0], ys, 1)
@@ -75,3 +78,5 @@ if __name__ == "__main__":
         ax.plot(xs, ys, enum(xs), color=colour)
         plt.draw()
         plt.pause(0.01)
+    if im:
+        plt.savefig('../images/noughtsCrosses2D.png', dpi=900)
