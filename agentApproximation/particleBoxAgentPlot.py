@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 """Unravelling of functions in agent.py applied to particleBox for plotting"""
-import math
+import math, sys, os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from numpy import array
 
-from particleBox import *
 from monteCarloPathSampling import *
 from kde import *
+
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'particleBox'))
+from particleBox import *
 
 
 # state variables and basic setup of the graphs

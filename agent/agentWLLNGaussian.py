@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """causal entropic forces using the weak law of large numbers"""
-import math
+import math, sys, os
 import matplotlib.pyplot as plt
 
-from particleBox import *
 from monteCarloGaussianPaths import *
 from kdeEM import *
+
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'particleBox'))
+from particleBox import *
 
 
 # state variables
