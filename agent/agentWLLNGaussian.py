@@ -4,7 +4,6 @@ import math, sys, os
 import matplotlib.pyplot as plt
 
 from monteCarloGaussianPaths import *
-from kdeEM import *
 
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'particleBox'))
 from particleBox import *
@@ -14,8 +13,9 @@ from particleBox import *
 stepSize, depth, samples, steps, delta = 5.0, 400, 400, 10, 5.0
 
 
-def force(pos, stepSize):
+def force(pos, timeStep):
     'calculate where the next step should be with mean of all samples'
+    # delta = sqrt(VAR/t)
     scale = delta*sqrt(timeStep)
     config = configuration(depth, dims, scale, valid)
     ps = monteCarloGaussianPaths(pos, samples, config)

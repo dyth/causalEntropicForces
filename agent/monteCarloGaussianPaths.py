@@ -2,6 +2,8 @@
 """module for Monte Carlo Path Sampling"""
 from math import sqrt
 from scipy.stats import norm
+import numpy as np
+import copy
 
 
 class configuration:
@@ -23,15 +25,15 @@ def randomStep(dims, scale):
 
 def randomWalk(walk, config):
     'Monte Carlo random walk returning list of coordinates and '
-    if depth == 0:
+    if config.depth == 0:
         # base case
         return walk
     else:
         # generate next step and add to current position
         step = randomStep(config.dims, config.scale)
-        point = [int(step[i] + walk[-1][i]) for i in range(dims)]
+        point = [int(step[i] + walk[-1][i]) for i in range(config.dims)]
         # if invalid, do the computation again by recursion otherwise descend
-        if not valid(walk, point):
+        if not config.valid(walk, point):
             return randomWalk(walk, config)
         else:
             walk.append(point)
@@ -42,7 +44,6 @@ def randomWalk(walk, config):
 def monteCarloGaussianPaths(start, number, config):
     'do number of monte carlo random walks at depth'
     walks = []
-    # delta = sqrt(VAR/t)
     for _ in range(number):
-        walks.append(randomWalk([start], config)[-1])
+        walks.append(randomWalk([start], copy.deepcopy(config))[-1])
     return walks
