@@ -17,7 +17,7 @@ class configuration:
     def randomStep(self, pos):
         'generate piecewise continuous Gaussian step and its probability'
         point = self.dist.rvs(size=self.dims)
-        return pos + point, self.dist.logpdf(point)
+        return pos + point, self.dist.cdf(point) - self.dist.cdf(point - 1.0)
 
 
 
@@ -25,14 +25,14 @@ def randomWalk(walk, logProb, config, depth):
     'return list of Monte Carlo Weiner Process coordinates by recursion'
     # base case at 0, otherwise generate
     if depth == 0:
-        print logProb
+        #print logProb
         return walk[-1], logProb
     else:
         point, p = config.randomStep(walk[-1])
         # if valid descend else redo
         if config.valid(walk, point):
-            logProb += p
-            #print logProb
+            #logProb += np.array([math.log(i) for i in p])
+            #print p
             walk.append(point)
             depth -= 1
         return randomWalk(walk, logProb, config, depth)
