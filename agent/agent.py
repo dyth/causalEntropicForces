@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""causal entropic forces using the weak law of large numbers"""
+"""as accurate an implementation as possible"""
 import math, sys, os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,25 +10,40 @@ sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'particleBox'))
 from particleBox import *
 
 
-# state variables
+# global entropic variables
 samples, steps = 400, 10
-
 depth = tau / timeStep
 variance = (kb * Tr * timeStep**2.0) / (4.0 * mass)
 
-def force(pos):
+
+def totalVolume(logProbs):
+    largest = max(logProbs)
+    others = sum([math.exp(largest - i) for i in logProbs])
+    others = math.log(1.0 + others)
+    return others - largest
+
+
+def entropicForce(pos):
     'calculate where the next step should be with mean of all samples'
+    # sample and return first points and the log-likelihoods
     stdev = math.sqrt(variance / depth)
-    config = configuration(dims, stdev, valid)
-    ps = monteCarloGaussianPaths(pos, samples, config, depth)
-    return [sum([float(p[i]) for p in ps]) / len(ps) for i in range(dims)]
+    config = configuration(dims, stdev, valid, mass)
+    points, logProbs = monteCarloGaussianPaths(pos, samples, config, depth)
+    # calculate mean of first step and the volume of the log-likelihoods
+    mean = np.mean(points)
+    volume = totalVolume(logProbs)
+    # calculate the total entropic force
+    total = 0.0
+    for i in range(depth):
+        total += (points[i] - mean) * (- volume - logProbs[i])
+    return 4.0 * Tc * mass * total / (samples * Tr * timeStep ** 2.0)
 
 
 def forcing(pos, steps):
     'return path taken by forcing of particle'
     path = []
     for j in range(steps):
-        pos = force(np.array(pos))
+        pos += entropicForce(pos) / mass
         path.append(pos)
         print "moved", j, "steps, now at", pos
     return path

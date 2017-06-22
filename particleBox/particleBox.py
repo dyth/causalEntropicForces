@@ -5,7 +5,7 @@ from scipy.constants import Boltzmann
 
 # state variables
 length = 400.0
-start = [length/10.0, length/10.0]
+start = array([length/10.0, length/10.0])
 bounds = ((0.0, length), (0.0, length/5.0))
 dims = len(bounds)
 
