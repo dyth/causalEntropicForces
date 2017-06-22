@@ -30,20 +30,23 @@ def entropicForce(pos):
     config = configuration(dims, stdev, valid, mass)
     points, logProbs = monteCarloGaussianPaths(pos, samples, config, depth)
     # calculate mean of first step and the volume of the log-likelihoods
-    mean = np.mean(points)
-    volume = totalVolume(logProbs)
+    mean = np.mean(points, axis=0)
+    volume = [totalVolume(logProbs[i]) for i in range(dims)]
     # calculate the total entropic force
-    total = 0.0
-    for i in range(depth):
-        total += (points[i] - mean) * (- volume - logProbs[i])
-    return 4.0 * Tc * mass * total / (samples * Tr * timeStep ** 2.0)
+    total = [0.0 for _ in range(dims)]
+    for j in range(int(depth)):
+        difference = points[j] - mean
+        for i in range(dims):
+            total[i] += difference[i] * (- volume[i] - logProbs[i][j])
+    print total
+    return 4.0 * Tc * np.array(total) / (samples * Tr * timeStep ** 2.0)
 
 
 def forcing(pos, steps):
     'return path taken by forcing of particle'
     path = []
     for j in range(steps):
-        pos += entropicForce(pos) / mass
+        pos += entropicForce(pos)
         path.append(pos)
         print "moved", j, "steps, now at", pos
     return path

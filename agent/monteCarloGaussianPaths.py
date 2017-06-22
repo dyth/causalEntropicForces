@@ -18,6 +18,7 @@ class configuration:
     def randomStep(self, pos):
         'generate piecewise continuous Gaussian step and its probability'
         point = self.dist.rvs(size=self.dims)
+        #point = np.array([point[i] / self.mass for i in range(self.dims)])
         return pos + point, self.dist.logpdf(point)
 
 
@@ -36,12 +37,13 @@ def randomWalk(walk, logProb, config, depth):
             depth -= 1
         return randomWalk(walk, logProb, config, depth)
 
-        
+
 def monteCarloGaussianPaths(start, samples, config, depth):
     'do number of monte carlo random walks at depth'
-    points, logProbs = [], []
+    points, logProbs = [], [[] for _ in range(config.dims)]
     for _ in range(samples):
         point, logProb = randomWalk([start], 0.0, config, depth)
         points.append(point)
-        logProbs.append(logProb)
-    return np.array(points), np.array(logProbs)
+        for i in range(config.dims):
+            logProbs[i].append(logProb[i])
+    return points, logProbs
