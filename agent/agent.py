@@ -13,20 +13,20 @@ from particleBox import *
 # global entropic variables
 samples, steps = 400, 10
 depth = tau / timeStep
-variance = (kb * Tr * timeStep**2.0) / (4.0 * mass)
+variance = (kb * Tr * timeStep**2.0) / (4.0 * mass) # variance per step
 
 
 def totalVolume(logProbs):
     largest = max(logProbs)
-    others = sum([math.exp(largest - i) for i in logProbs])
+    others = sum([math.exp(i - largest) for i in logProbs])
     others = math.log(1.0 + others)
-    return others - largest
+    return largest - others
 
 
 def entropicForce(pos):
     'calculate where the next step should be with mean of all samples'
     # sample and return first points and the log-likelihoods
-    stdev = math.sqrt(variance / depth)
+    stdev = math.sqrt(variance)
     config = configuration(dims, stdev, valid, mass)
     points, logProbs = monteCarloGaussianPaths(pos, samples, config, depth)
     # calculate mean of first step and the volume of the log-likelihoods
@@ -34,27 +34,29 @@ def entropicForce(pos):
     volume = [totalVolume(logProbs[i]) for i in range(dims)]
     # calculate the total entropic force
     total = [0.0 for _ in range(dims)]
-    for j in range(int(depth)):
+    for j in range(samples):
         difference = points[j] - mean
         for i in range(dims):
-            total[i] += difference[i] * (- volume[i] - logProbs[i][j])
-    print total
-    return 4.0 * Tc * np.array(total) / (samples * Tr * timeStep ** 2.0)
+            total[i] += difference[i] * (volume[i] - logProbs[i][j])
+    return 4.0 * Tc * np.array(total) / (float(samples**2) * Tr * timeStep)
 
 
-def forcing(pos, steps):
-    'return path taken by forcing of particle'
-    path = []
-    for j in range(steps):
-        pos += entropicForce(pos)
-        path.append(pos)
-        print "moved", j, "steps, now at", pos
-    return path
+def forcing(pos, steps, path):
+    'return path taken by forcing of particle, similar to the randomWalk'
+    if steps == 0:
+        return path
+    else:
+        newPos = pos + entropicForce(pos)
+        if valid(path, newPos):
+            path.append(newPos.tolist())
+            steps -= 1
+            print "moved", j, "steps, now at", newPos
+    return forcing(newPos, steps, path)
 
 
 
 print "starting position", start
-path = [start] + forcing(start, steps)
+path = [start.toList()] + forcing(start, steps, [])
 path = [[p[i] for p in path] for i in range(dims)]
 
 plt.figure()
