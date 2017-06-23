@@ -24,3 +24,11 @@ def valid(walk, p):
         return False
     else:
         return True
+
+        
+def randomStep(dist, pos):
+    'generate piecewise continuous Gaussian step and its likelihood'
+    # this is a simulation of a Wiener Process, by the normal distribution
+    point = dist.rvs(size=dims)
+    return pos + point, dist.logpdf(point)
+

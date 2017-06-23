@@ -8,18 +8,12 @@ import numpy as np
 class configuration:
     'class prevents sesquipedalian invocations'
     
-    def __init__(self, dims, stdev, valid, mass):
+    def __init__(self, dims, stdev, valid, mass, randomStep):
         self.dims = dims
         self.valid = valid
         self.dist = norm(0.0, stdev)
         self.mass = mass
-
-        
-    def randomStep(self, pos):
-        'generate piecewise continuous Gaussian step and its probability'
-        point = self.dist.rvs(size=self.dims)
-        #point = np.array([point[i] / self.mass for i in range(self.dims)])
-        return pos + point, self.dist.logpdf(point)
+        self.randomStep = randomStep
 
 
 
@@ -27,9 +21,9 @@ def randomWalk(walk, logProb, config, depth):
     'return list of Monte Carlo Weiner Process coordinates by recursion'
     # base case at 0, otherwise generate
     if depth == 0:
-        return walk[-1], logProb
+        return walk[1], logProb
     else:
-        point, p = config.randomStep(walk[-1])
+        point, p = config.randomStep(config.dist, walk[-1])
         # if valid descend else redo
         if config.valid(walk, point):
             logProb += p

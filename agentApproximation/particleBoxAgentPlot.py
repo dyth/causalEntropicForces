@@ -14,7 +14,7 @@ from particleBox import *
 
 # state variables and basic setup of the graphs
 stepSize, depth, samples, steps = 5.0, 100, 100, 2
-im = False # make True if you want to save images
+im = False # True if you want to save images
 
 plt.ion()
 plt.show()

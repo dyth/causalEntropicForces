@@ -27,7 +27,7 @@ def entropicForce(pos):
     'calculate where the next step should be with mean of all samples'
     # sample and return first points and the log-likelihoods
     stdev = math.sqrt(variance)
-    config = configuration(dims, stdev, valid, mass)
+    config = configuration(dims, stdev, valid, mass, randomStep)
     points, logProbs = monteCarloGaussianPaths(pos, samples, config, depth)
     # calculate mean of first step and the volume of the log-likelihoods
     mean = np.mean(points, axis=0)
@@ -36,9 +36,10 @@ def entropicForce(pos):
     total = [0.0 for _ in range(dims)]
     for j in range(samples):
         difference = points[j] - mean
+        print difference, points[j]
         for i in range(dims):
             total[i] += difference[i] * (volume[i] - logProbs[i][j])
-    return 4.0 * Tc * np.array(total) / (float(samples**2) * Tr * timeStep)
+    return 4.0 * Tc * np.array(total) / (samples**2.0 * Tr * timeStep**2.0)
 
 
 def forcing(pos, moved, path):
