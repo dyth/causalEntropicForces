@@ -41,22 +41,23 @@ def entropicForce(pos):
     return 4.0 * Tc * np.array(total) / (float(samples**2) * Tr * timeStep)
 
 
-def forcing(pos, steps, path):
+def forcing(pos, moved, path):
     'return path taken by forcing of particle, similar to the randomWalk'
-    if steps == 0:
+    if moved == 0:
         return path
     else:
         newPos = pos + entropicForce(pos)
         if valid(path, newPos):
             path.append(newPos.tolist())
-            steps -= 1
-            print "moved", j, "steps, now at", newPos
-    return forcing(newPos, steps, path)
+            moved -= 1
+            pos = newPos
+            print "moved", steps - moved, "steps, now at", newPos
+    return forcing(pos, moved, path)
 
 
 
 print "starting position", start
-path = [start.toList()] + forcing(start, steps, [])
+path = [start.tolist()] + forcing(start, steps, [])
 path = [[p[i] for p in path] for i in range(dims)]
 
 plt.figure()
