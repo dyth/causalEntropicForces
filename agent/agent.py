@@ -1,19 +1,11 @@
 #!/usr/bin/env python
 """as accurate an implementation as possible"""
-import math, sys, os
+import math, sys, os, json
 import matplotlib.pyplot as plt
 import numpy as np
 
 from monteCarloGaussianPaths import *
 
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]), 'particleBox'))
-from particleBox import *
-
-
-# global entropic variables
-samples, steps = 400, 10
-depth = tau / timeStep
-variance = (kb * Tr * timeStep**2.0) / (4.0 * mass) # variance per step
 
 
 def totalVolume(logProbs):
@@ -57,14 +49,32 @@ def forcing(pos, moved, path):
 
 
 
+# load configuration properties
+with open('config.json') as configFile:
+    config = json.load(configFile)
+    
+# import environment
+environment = str(config["game"])
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]), environment))
+filename = '../' + environment + "/" + environment + '.py'
+with open(filename) as f:
+    exec(compile(f.read(), filename, "exec"))
+
+# global entropic variables
+samples, steps = 400, 10
+depth = tau / timeStep
+variance = (kb * Tr * timeStep**2.0) / (4.0 * mass) # variance per step
+
+# start and do forcing, keep track of path
 print "starting position", start
 path = [start.tolist()] + forcing(start, steps, [])
-path = [[p[i] for p in path] for i in range(dims)]
+
 
 plt.figure()
 ax = plt.gca(aspect = 'equal')
 ax.set_title("Particle in a 2 dimensional box")
 ax.set_xlim(bounds[0][0], bounds[0][1])
 ax.set_ylim(bounds[1][0], bounds[1][1])
+path = [[p[i] for p in path] for i in range(dims)]
 ax.plot(path[0], path[1], linewidth=0.25, color='k')
 plt.show()
