@@ -2,6 +2,7 @@
 """particle in a box which drifts towards the centre"""
 from numpy import array
 from scipy.constants import Boltzmann
+import matplotlib.pyplot as plt
 
 # state variables
 length = 400.0
@@ -32,3 +33,14 @@ def randomStep(dist, pos):
     point = dist.rvs(size=dims)
     return pos + point, dist.logpdf(point)
 
+
+def plot(path):
+    'plot the path of the particle on a pyplot graph'
+    plt.figure()
+    ax = plt.gca(aspect = 'equal')
+    ax.set_title("Particle in a 2 dimensional box")
+    ax.set_xlim(bounds[0][0], bounds[0][1])
+    ax.set_ylim(bounds[1][0], bounds[1][1])
+    path = [[p[i] for p in path] for i in range(dims)]
+    ax.plot(path[0], path[1], linewidth=0.25, color='k')
+    plt.show()

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """as accurate an implementation as possible"""
 import math, sys, os, json
-import matplotlib.pyplot as plt
 import numpy as np
 
 from monteCarloGaussianPaths import *
@@ -9,6 +8,7 @@ from monteCarloGaussianPaths import *
 
 
 def totalVolume(logProbs):
+    'calculate the volume fraction for a dimension'
     largest = max(logProbs)
     others = sum([math.exp(i - largest) for i in logProbs])
     others = math.log(1.0 + others)
@@ -28,7 +28,6 @@ def entropicForce(pos):
     total = [0.0 for _ in range(dims)]
     for j in range(samples):
         difference = points[j] - mean
-        print difference, points[j]
         for i in range(dims):
             total[i] += difference[i] * (volume[i] - logProbs[i][j])
     return 4.0 * Tc * np.array(total) / (samples**2.0 * Tr * timeStep**2.0)
@@ -61,20 +60,12 @@ with open(filename) as f:
     exec(compile(f.read(), filename, "exec"))
 
 # global entropic variables
-samples, steps = 400, 10
+exec("samples = + int(" + config["samples"] + ")")
+exec("steps = int(" + config["steps"] + ")")
 depth = tau / timeStep
 variance = (kb * Tr * timeStep**2.0) / (4.0 * mass) # variance per step
 
-# start and do forcing, keep track of path
-print "starting position", start
+# *** do causal entropic forcing, keep track of path ***
+print "starting position at", start
 path = [start.tolist()] + forcing(start, steps, [])
-
-
-plt.figure()
-ax = plt.gca(aspect = 'equal')
-ax.set_title("Particle in a 2 dimensional box")
-ax.set_xlim(bounds[0][0], bounds[0][1])
-ax.set_ylim(bounds[1][0], bounds[1][1])
-path = [[p[i] for p in path] for i in range(dims)]
-ax.plot(path[0], path[1], linewidth=0.25, color='k')
-plt.show()
+plot(path)
