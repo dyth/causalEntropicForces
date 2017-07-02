@@ -8,10 +8,10 @@ import numpy as np
 class configuration:
     'class preventing sesquipedalian invocations'
     
-    def __init__(self, dims, stdev, valid, mass, randomStep):
+    def __init__(self, dims, dist, valid, mass, randomStep):
         self.dims = dims
+        self.dist = dist
         self.valid = valid
-        self.dist = norm(0.0, stdev)
         self.mass = mass
         self.randomStep = randomStep
 

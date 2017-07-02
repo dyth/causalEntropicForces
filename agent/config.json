@@ -2,5 +2,6 @@
 	"game"    : "particleBox",
 	"style"   : "max",
 	"samples" : "400",
-	"steps"   : "10"
+	"steps"   : "10",
+	"dist"    : "Gaussian"
 }

@@ -17,6 +17,7 @@ Tc = 5.0 * Tr       # Causal Path Temperature
 timeStep = 0.025    # Interval between random walk sampling
 mass = 10.0 ** -21
 
+stdev = math.sqrt((kb * Tr * timeStep**2.0) / (4.0 * mass))
 
 def valid(walk, p):
     'determine whether a walk is valid'
