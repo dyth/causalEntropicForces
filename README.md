@@ -18,7 +18,19 @@ There are three stages in the agent and are found in `monteCarloPathSampling.py`
 
 `agentEM.py` and `kdeEM.py` combine an agent with an expectation-maximsation algorithm, such that the agent now advances to the sample mean of the stochastic walks obtained from kernel density estimation. `agentEMWLLN.py` achieves this at a faster rate using the weak law of large numbers to advance the particle to the statistical mean of the endpoints of each random walk.
 
+`config.json` stores agent specific properties, whereas each environment python file contains state variables.
+
 ## Particle in a Box
+
+A recommended config file is:
+
+{
+	"game"    : "particleBox",
+	"style"   : "max",
+	"samples" : "400",
+	"steps"   : "10",
+	"dist"    : "Gaussian"
+}
 
 The directory contains `particleBox.py`, a configuration file with information about the simulation. It has a start state, a boundary and a `valid` function to determine if the next move is valid or not.
 
