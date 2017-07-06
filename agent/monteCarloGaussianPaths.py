@@ -7,7 +7,6 @@ import numpy as np
 
 class configuration:
     'class preventing sesquipedalian invocations'
-    
     def __init__(self, dims, dist, valid, mass, randomStep):
         self.dims = dims
         self.dist = dist

@@ -67,6 +67,8 @@ dist = str(config["dist"])
 # if Gaussian distribution
 if (dist == "Gaussian"):
     dist = norm(0.0, stdev)
+else:
+    pass
 
 # *** do causal entropic forcing, keep track of path ***
 print "starting position at", start

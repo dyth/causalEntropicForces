@@ -69,7 +69,7 @@ if __name__ == "__main__":
     plt.ion()
     plt.show()
     for _ in range(number):
-        xs, ys, winner = randomWalk(initialBoard, 1, [0], [0])
+        xs, ys, winner = randomWalk(initialBoard, 1, [], [])
         xs = historyToEncoding([0], xs, 1)
         ys = historyToEncoding([0], ys, 1)
         xs = centreLight(xs)
