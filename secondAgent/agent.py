@@ -4,6 +4,11 @@ from particleBox import *
 from scipy.stats import norm
 
 
+def entropic_forcing(start, walks, logProbs):
+    'calculate the path integral and determine the next best move'
+    return move
+
+
 distribution = norm(mean, stdev)
 config = Configuration(dims, valid)
 path = []
