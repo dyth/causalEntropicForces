@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Model Based Reflex Agent with Entropic Forcing Updates"""
+"""Monte Carlo Random Walks"""
 import math
 from scipy.stats import norm
 import numpy as np
@@ -37,7 +37,12 @@ def random_walk(walk, logProb, config, depth):
 
 def monteCarloGaussianPaths(start, nosamples, config, depth):
     'do nosamples of random walks at depth from start'
-    return [random_walk([start], 0.0, config, depth) for i in range(nosamples)]
+    walks, logProbs = [], []
+    for i in range(nosamples):
+        w, lP = random_walk([start], 0.0, config, depth)
+        walks.append(w)
+        logProbs.append(lP)
+    return walks, logProbs
 
 
 if __name__ == "__main__":
