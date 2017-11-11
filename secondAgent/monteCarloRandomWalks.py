@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Monte Carlo Random Walks"""
-import math
+import math, sys
 from scipy.stats import norm
 import numpy as np
 
@@ -22,9 +22,7 @@ def random_step(distribution, dimensions):
 def random_walk(walk, logProb, config, depth):
     'return list of Monte Carlo Weiner Process coordinates by recursion'
     # if base, return trajectory and logarithimic probability
-    if depth == 0:
-        return walk, logProb
-    else:
+    while depth > 0:
         offset, logP = random_step(config.distribution, config.dimensions)
         point = walk[-1] + offset
         # if valid descend else redo
@@ -32,13 +30,13 @@ def random_walk(walk, logProb, config, depth):
             logProb += logP
             walk.append(point)
             depth -= 1
-        return random_walk(walk, logProb, config, depth)
+    return walk, logProb
 
 
-def monteCarloGaussianPaths(start, nosamples, config, depth):
+def monteCarloGaussianPaths(start, numSamples, config, depth):
     'do nosamples of random walks at depth from start'
     walks, logProbs = [], []
-    for i in range(nosamples):
+    for i in range(numSamples):
         w, lP = random_walk([start], 0.0, config, depth)
         walks.append(w)
         logProbs.append(lP)

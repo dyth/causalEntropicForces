@@ -3,6 +3,7 @@
 from numpy import array
 from scipy.constants import Boltzmann
 import matplotlib.pyplot as plt
+import math
 
 # state variables
 length = 400.0
@@ -20,10 +21,10 @@ mass = 10.0 ** -21
 mean = 0.0
 stdev = math.sqrt((kb * Tr * timeStep**2.0) / (4.0 * mass))
 
-def valid(walk, p):
+def valid(walk, position):
     'determine whether a walk is valid'
-    if ((p[0] < bounds[0][0]) or (p[0] > bounds[0][1]) or
-        (p[1] < bounds[1][0]) or (p[1] > bounds[1][1])):
+    if ((position[0] < bounds[0][0]) or (position[0] > bounds[0][1]) or
+        (position[1] < bounds[1][0]) or (position[1] > bounds[1][1])):
         return False
     else:
         return True
