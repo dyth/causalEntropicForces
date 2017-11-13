@@ -5,31 +5,35 @@ from scipy.constants import Boltzmann
 import matplotlib.pyplot as plt
 import math
 
-# state variables
-length = 400.0
-start = array([length/10.0, length/10.0])
-bounds = ((0.0, length), (0.0, length/5.0))
-dims = len(bounds)
+class ParticleBox:
 
-KB = Boltzmann      # Boltzmann Constant
-TAU = 10.0          # Time horizon
-TR = 400000.0       # Temperature of heat reservoir of random movement
-TC = 5.0 * TR       # Causal Path Temperature
-TIMESTEP = 0.025    # Interval between random walk sampling
-MASS = 10.0 ** -21
+    def __init__(self):
+        # state variables
+        self.length = 400.0
+        self.start = array([self.length/10.0, self.length/10.0])
+        self.bounds = ((0.0, self.length), (0.0, self.length/5.0))
+        self.dims = len(self.bounds)
 
-MEAN = 0.0
-STDEV = math.sqrt((KB * TR * TIMESTEP**2.0) / (4.0 * MASS))
-AMPLITUDE = math.sqrt(MASS * KB * TR) / TIMESTEP
+        self.KB = Boltzmann      # Boltzmann Constant
+        self.TAU = 10.0          # Time horizon
+        self.TR = 400000.0       # Temperature of random movement
+        self.TC = 5.0 * self.TR  # Causal Path Temperature
+        self.TIMESTEP = 0.025    # Interval between random walk sampling
+        self.MASS = 10.0 ** -21
+
+        self.MEAN = 0.0
+        self.AMPLITUDE = math.sqrt(self.MASS*self.KB*self.TR) / self.TIMESTEP
 
 
-def valid(walk, position):
-    'determine whether a walk is valid'
-    if ((position[0] < bounds[0][0]) or (position[0] > bounds[0][1]) or
-        (position[1] < bounds[1][0]) or (position[1] > bounds[1][1])):
-        return False
-    else:
-        return True
+    def valid(self, walk, position):
+        'determine whether a walk is valid'
+        if ((position[0] < self.bounds[0][0]) or
+            (position[0] > self.bounds[0][1]) or
+            (position[1] < self.bounds[1][0]) or
+            (position[1] > self.bounds[1][1])):
+            return False
+        else:
+            return True
 
 
 def plot(path):

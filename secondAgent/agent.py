@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """Model Based Reflex Agent with Entropic Forcing Updates"""
-from particleBox import *
+from particleBox import ParticleBox
+from langevin import *
 from scipy.stats import norm
 import math
-from monteCarloRandomWalks import *
 
 
 def entropic_forcing(walks, logProbs, numSamples):
@@ -16,6 +16,9 @@ def entropic_forcing(walks, logProbs, numSamples):
     return 2 * Tc * path_integral / (Tr * numSamples * 100)
 
 
+environment = ParticleBox()
+monte_carlo_path_sampling(0.0, 0.0, environment)
+"""
 distribution = norm(mean, stdev)
 config = Configuration(distribution, dims, valid)
 path = []
@@ -32,3 +35,4 @@ while True:
         sys.exit()
     print pos
     path.append(pos)
+"""

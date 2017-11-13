@@ -3,39 +3,33 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-
+import math
 
 damping = 1.0
-DISTRIBUTION = norm(0.0, 1.0)
 
 
-def step(xi, vi, temperature, damping):
+def step(u, v, environment):
     '''return next distance and speed timestep using Euler's Method'''
     #drag = -1 * damping * vi
     #solvent = np.random.normal(0, 2 * temperature * damping)
-    fpotential = DISTRIBUTION.rvs(1)
-    # drag + solvent + fpotential
-    return xi + vi * timestep, vi + fpotential * timestep
+    DISTRIBUTION = norm(0.0, environment.AMPLITUDE)
+    a = DISTRIBUTION.rvs(1) / environment.MASS
+    # drag + solvent + a
+    v += a * environment.TIMESTEP
+    return u + v * environment.TIMESTEP, v
 
 
-def random_walk(p, v, totaltime, timestep, temperature, damping):
+def random_walk(u, v, environment):
     'Runs all steps of the simulation'
-    positions = [p]
-
-    for s in range(int(totaltime / timestep)):
-        p, v = step(p, v, temperature, damping)
-        positions.append(p)
-
-    plt.figure()
-    plt.plot(positions)
-    plt.show()
+    positions = [u]
+    for _ in range(int(environment.TAU / environment.TIMESTEP)):
+        u, v = step(u, v, environment)
+        positions.append(u)
     return positions
 
-    
-if __name__ == '__main__':
-    position = 0.0
-    velocity = 0.0
-    temperature = 1.0
-    timestep = 0.025
-    totaltime = 10.0
-    random_walk(0.0, velocity, totaltime, timestep, temperature, damping)
+
+def monte_carlo_path_sampling(u, v, environment):
+    plt.figure()
+    for _ in range(100):
+        plt.plot(random_walk(u, v, environment))
+    plt.show()
