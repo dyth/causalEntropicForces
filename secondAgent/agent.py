@@ -20,7 +20,7 @@ distribution = norm(mean, stdev)
 config = Configuration(distribution, dims, valid)
 path = []
 numSamples = 100
-depth = 500
+depth = tau / timeStep
 pos = start
 print pos
 while True:
