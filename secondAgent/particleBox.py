@@ -11,15 +11,17 @@ start = array([length/10.0, length/10.0])
 bounds = ((0.0, length), (0.0, length/5.0))
 dims = len(bounds)
 
-kb = Boltzmann      # Boltzmann Constant
-tau = 10.0          # Time horizon
-Tr = 400000.0       # Temperature of heat reservoir of random movement
-Tc = 5.0 * Tr       # Causal Path Temperature
-timeStep = 0.025    # Interval between random walk sampling
-mass = 10.0 ** -21
+KB = Boltzmann      # Boltzmann Constant
+TAU = 10.0          # Time horizon
+TR = 400000.0       # Temperature of heat reservoir of random movement
+TC = 5.0 * TR       # Causal Path Temperature
+TIMESTEP = 0.025    # Interval between random walk sampling
+MASS = 10.0 ** -21
 
-mean = 0.0
-stdev = math.sqrt((kb * Tr * timeStep**2.0) / (4.0 * mass))
+MEAN = 0.0
+STDEV = math.sqrt((KB * TR * TIMESTEP**2.0) / (4.0 * MASS))
+AMPLITUDE = math.sqrt(MASS * KB * TR) / TIMESTEP
+
 
 def valid(walk, position):
     'determine whether a walk is valid'
