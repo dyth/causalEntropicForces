@@ -5,22 +5,21 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 import math
 
-damping = 1.0
-
 
 def step(u, v, environment):
-    '''return next distance and speed timestep using Euler's Method'''
-    #drag = -1 * damping * vi
-    #solvent = np.random.normal(0, 2 * temperature * damping)
+    'compute next distance and speed using Forward Euler'
+    #DAMPING = 1.0 # between 0.0 and 1.0
+    #drag = -1 * DAMPING * vi
+    #solvent = np.random.normal(0, 2 * environment.TR * DAMPING)
     DISTRIBUTION = norm(0.0, environment.AMPLITUDE)
     a = DISTRIBUTION.rvs(1) / environment.MASS
     # drag + solvent + a
-    v += a * environment.TIMESTEP
-    return u + v * environment.TIMESTEP, v
+    #v += a * environment.TIMESTEP
+    return u + a * (environment.TIMESTEP) ** 2.0 / 2.0, v#v * environment.TIMESTEP, v
 
 
 def random_walk(u, v, environment):
-    'Runs all steps of the simulation'
+    'Langevin random walk from force for TAU / TIMESTEP steps'
     positions = [u]
     for _ in range(int(environment.TAU / environment.TIMESTEP)):
         u, v = step(u, v, environment)
@@ -28,8 +27,11 @@ def random_walk(u, v, environment):
     return positions
 
 
-def monte_carlo_path_sampling(u, v, environment):
+def monte_carlo_path_sampling(number, u, v, environment):
+    'do number walks within environment with starting position u and velocity v'
+    walks = [random_walk(u, v, environment) for _ in range(number)]
     plt.figure()
-    for _ in range(100):
-        plt.plot(random_walk(u, v, environment))
+    for w in walks:
+        plt.plot(w)
     plt.show()
+    return walks
