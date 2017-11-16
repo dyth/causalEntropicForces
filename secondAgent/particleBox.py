@@ -2,6 +2,7 @@
 """particle in a box which drifts towards the centre"""
 from numpy import array
 from scipy.constants import Boltzmann
+from scipy.stats import norm
 import matplotlib.pyplot as plt
 import math
 
@@ -12,7 +13,7 @@ class ParticleBox:
         self.length = 400.0
         self.start = array([self.length/10.0, self.length/10.0])
         self.bounds = ((0.0, self.length), (0.0, self.length/5.0))
-        self.dims = len(self.bounds)
+        self.DIMS = len(self.bounds)
 
         self.KB = Boltzmann      # Boltzmann Constant
         self.TAU = 10.0          # Time horizon
@@ -23,6 +24,7 @@ class ParticleBox:
 
         self.MEAN = 0.0
         self.AMPLITUDE = math.sqrt(self.MASS*self.KB*self.TR) / self.TIMESTEP
+        self.DISTRIBUTION = norm(self.MEAN, self.AMPLITUDE)
 
 
     def valid(self, walk, position):

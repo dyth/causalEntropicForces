@@ -2,36 +2,32 @@
 """Inspired by https://github.com/eholmgren/langevin"""
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
 import math
 
 
-def step(u, v, environment):
-    'compute next distance and speed using Forward Euler'
-    #DAMPING = 1.0 # between 0.0 and 1.0
-    #drag = -1 * DAMPING * vi
-    #solvent = np.random.normal(0, 2 * environment.TR * DAMPING)
-    DISTRIBUTION = norm(0.0, environment.AMPLITUDE)
-    a = DISTRIBUTION.rvs(1) / environment.MASS
-    # drag + solvent + a
-    #v += a * environment.TIMESTEP
-    return u + a * (environment.TIMESTEP) ** 2.0 / 2.0, v#v * environment.TIMESTEP, v
+def step(u, environment):
+    'compute next distance by Forward Euler'
+    f = environment.DISTRIBUTION.rvs(environment.DIMS)
+    a = f / environment.MASS
+    return u + a * (environment.TIMESTEP) ** 2.0, environment.DISTRIBUTION.logpdf(f)
 
 
-def random_walk(u, v, environment):
+def random_walk(u, environment):
     'Langevin random walk from force for TAU / TIMESTEP steps'
     positions = [u]
-    for _ in range(int(environment.TAU / environment.TIMESTEP)):
-        u, v = step(u, v, environment)
-        positions.append(u)
+    count = 0
+    while count != int(environment.TAU / environment.TIMESTEP):
+        u, logPr = step(positions[-1], environment)
+        if environment.valid(positions, u):
+            positions.append(u)
+            count += 1
     return positions
 
 
-def monte_carlo_path_sampling(number, u, v, environment):
+def monte_carlo_path_sampling(number, u, environment):
     'do number walks within environment with starting position u and velocity v'
-    walks = [random_walk(u, v, environment) for _ in range(number)]
     plt.figure()
-    for w in walks:
-        plt.plot(w)
+    walk = [random_walk(u, environment) for _ in range(number)]
+    for w in walk:
+        plt.plot([wi[0] for wi in w], [wi[1] for wi in w])
     plt.show()
-    return walks

@@ -17,7 +17,7 @@ def entropic_forcing(walks, logProbs, numSamples):
 
 
 environment = ParticleBox()
-monte_carlo_path_sampling(100, 0.0, 0.0, environment)
+monte_carlo_path_sampling(20, environment.start, environment)
 """
 distribution = norm(mean, stdev)
 config = Configuration(distribution, dims, valid)
