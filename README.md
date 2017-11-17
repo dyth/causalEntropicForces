@@ -7,7 +7,7 @@ Reimplementation of [Causal Entropic Forces](http://math.mit.edu/~freer/papers/P
 Python libraries: `numpy`, `matplotlib`, `scipy`
 
 ```
-$ pip install numpy, matplotlib, scipy
+$ pip install numpy matplotlib scipy
 ```
 
 ## Run current version
