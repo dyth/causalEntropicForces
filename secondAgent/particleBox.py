@@ -3,8 +3,7 @@
 from numpy import array
 from scipy.constants import Boltzmann
 from scipy.stats import norm
-import matplotlib.pyplot as plt
-import math
+from math import sqrt
 
 class ParticleBox:
 
@@ -23,7 +22,7 @@ class ParticleBox:
         self.MASS = 10.0 ** -21
 
         self.MEAN = 0.0
-        self.AMPLITUDE = math.sqrt(self.MASS*self.KB*self.TR) / self.TIMESTEP
+        self.AMPLITUDE = sqrt(self.MASS * self.KB * self.TR) / self.TIMESTEP
         self.DISTRIBUTION = norm(self.MEAN, self.AMPLITUDE)
 
 
@@ -36,15 +35,3 @@ class ParticleBox:
             return False
         else:
             return True
-
-
-def plot(path):
-    'plot the path of the particle on a pyplot graph'
-    plt.figure()
-    ax = plt.gca(aspect = 'equal')
-    ax.set_title("Particle in a 2 dimensional box")
-    ax.set_xlim(bounds[0][0], bounds[0][1])
-    ax.set_ylim(bounds[1][0], bounds[1][1])
-    path = [[p[i] for p in path] for i in range(dims)]
-    ax.plot(path[0], path[1], linewidth=0.25, color='k')
-    plt.show()

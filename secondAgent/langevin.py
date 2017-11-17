@@ -2,7 +2,6 @@
 """Inspired by https://github.com/eholmgren/langevin"""
 import numpy as np
 from scipy.stats import norm
-import matplotlib.pyplot as plt
 import math
 
 
@@ -16,17 +15,18 @@ def step(u, environment):
 
 def random_walk(u, environment):
     'Langevin random walk from force for TAU / TIMESTEP steps'
-    positions, count = [u], int(environment.TAU / environment.TIMESTEP)
-    logPr, force = np.zeros(environment.DIMS), []
+    walk, count = [u], int(environment.TAU / environment.TIMESTEP)
+    logPr, force = np.zeros(environment.DIMS), None
     while count != 0:
-        u, lP, f = step(positions[-1], environment)
+        u, lP, f = step(walk[-1], environment)
         # if valid then redo
-        if environment.valid(positions, u):
-            positions.append(u)
+        if environment.valid(walk, u):
+            walk.append(u)
             count -= 1
             logPr += lP
-            force.append(f)
-    return positions, logPr, np.array(force[1]) - np.array(force[0])
+            if force == None:
+                force = f
+    return walk, logPr, np.array(force)
 
 
 def monte_carlo_path_sampling(number, pos, environment):

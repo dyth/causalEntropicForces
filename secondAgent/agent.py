@@ -2,9 +2,9 @@
 """Model Based Reflex Agent with Entropic Forcing Updates"""
 from particleBox import ParticleBox
 from langevin import *
+import matplotlib.pyplot as plt
 from scipy.stats import norm
 import numpy as np
-import math, sys
 
 
 def entropic_forcing(logProbs, environment, forces):
@@ -36,7 +36,7 @@ def debounce_entropic_forcing(u, environment):
 
 
 plot = True
-path, numSamples = [], 500
+path, numSamples = [], 1000
 environment = ParticleBox()
 pos = environment.start
 print pos
@@ -46,13 +46,6 @@ debounce_entropic_forcing(pos, environment)
 """
 while True:
     walks, logProbs, f = monte_carlo_path_sampling(numSamples, pos, environment)
-
-    if plot:
-        plt.figure()
-        for w in walks:
-            plt.plot([wi[0] for wi in w], [wi[1] for wi in w])
-        plt.show()
-        
     move = entropic_forcing(logProbs, environment, f)
     pos += move
     if not environment.valid(path, pos):
@@ -60,4 +53,5 @@ while True:
         sys.exit()
     print pos
     path.append(pos)
+
 
