@@ -1,76 +1,57 @@
 #!/usr/bin/env python
-"""as accurate an implementation as possible"""
-import math, sys, os, json
+"""Model Based Reflex Agent with Entropic Forcing Updates"""
+from particleBox import ParticleBox
+from langevin import *
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 import numpy as np
 
-from monteCarloGaussianPaths import *
+
+def entropic_forcing(logProbs, environment, forces):
+    'calculate the path integral and determine the next best move'
+    pathIntegral = 0.0
+    for i, f in enumerate(forces):
+        # calculate the partial volume v and then weighted sum to path_integral
+        v = np.log(sum([np.exp(lP - logProbs[i]) for lP in logProbs]))
+        pathIntegral += np.multiply(f, v)
+    nom = 2.0 * environment.TC * pathIntegral * environment.TIMESTEP ** 2
+    denom = environment.TR * (len(forces) + 1) * environment.MASS
+    return nom / denom
+
+
+def debounce_entropic_forcing(u, environment):
+    'calculate the path integral until it converges'
+    walks, logPr, forces = [], [], []
+    pathIntegral, pI = np.array([None, 2.0]), np.array([1.0, 1.0])
+    while not np.array_equal(pathIntegral, pI):
+        pI = pathIntegral
+        w, lP, initialForce = random_walk(u, environment)
+        walks.append(w)
+        logPr.append(lP)
+        forces.append(initialForce)
+        pathIntegral = entropic_forcing(logPr, environment, forces)
+        print len(forces), pathIntegral
+    return pathIntegral
 
 
 
-def totalVolume(logProbs):
-    'calculate the volume fraction for a dimension'
-    largest = max(logProbs)
-    others = sum([math.exp(i - largest) for i in logProbs])
-    others = math.log(1.0 + others)
-    return largest - others
+plot = True
+path, numSamples = [], 1000
+environment = ParticleBox()
+pos = environment.start
+print pos
+"""
+debounce_entropic_forcing(pos, environment)
+
+"""
+while True:
+    walks, logProbs, f = monte_carlo_path_sampling(numSamples, pos, environment)
+    move = entropic_forcing(logProbs, environment, f)
+    pos += move
+    if not environment.valid(path, pos):
+        print "Error: Agent in invalid environment state,", pos
+        sys.exit()
+    print pos
+    path.append(pos)
 
 
-def entropicForce(pos, dist):
-    'calculate where the next step should be with mean of all samples'
-    # sample and return first points and the log-likelihoods
-    config = configuration(dims, dist, valid, mass, randomStep)
-    points, logProbs = monteCarloGaussianPaths(pos, samples, config, depth)
-    # calculate mean of first step and the volume of the log-likelihoods
-    mean = np.mean(points, axis=0)
-    volume = [totalVolume(logProbs[i]) for i in range(dims)]
-    # calculate the total entropic force
-    total = [0.0 for _ in range(dims)]
-    for j in range(samples):
-        difference = points[j] - mean
-        for i in range(dims):
-            total[i] += difference[i] * (volume[i] - logProbs[i][j])
-    return 4.0 * Tc * np.array(total) / (samples**2.0 * Tr * timeStep**2.0)
-
-
-def forcing(pos, moved, dist, path):
-    'return path taken by forcing of particle, similar to the randomWalk'
-    if moved == 0:
-        return path
-    else:
-        newPos = pos + entropicForce(pos, dist)
-        if valid(path, newPos):
-            path.append(newPos.tolist())
-            moved -= 1
-            pos = newPos
-            print "moved", steps - moved, "steps, now at", newPos
-    return forcing(pos, moved, dist, path)
-
-
-
-# load configuration properties
-with open('config.json') as configFile:
-    config = json.load(configFile)
-    
-# import environment
-environment = str(config["game"])
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]), environment))
-filename = '../' + environment + "/" + environment + '.py'
-with open(filename) as f:
-    exec(compile(f.read(), filename, "exec"))
-
-# global entropic variables
-depth = tau / timeStep
-samples = int(config["samples"])
-steps = int(config["steps"])
-dist = str(config["dist"])
-
-# if Gaussian distribution
-if (dist == "Gaussian"):
-    dist = norm(0.0, stdev)
-else:
-    pass
-
-# *** do causal entropic forcing, keep track of path ***
-print "starting position at", start
-path = [start.tolist()] + forcing(start, steps, dist, [])
-plot(path)
