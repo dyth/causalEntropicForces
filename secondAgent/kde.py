@@ -1,27 +1,19 @@
 #!/usr/bin/env python
-"""perform kernel density estimation on each dimension, then get result
-import warnings
-import numpy as np
-from sklearn.neighbors import KernelDensity
-
-
-def kde(x):
-    'use scikit-learn to perform kernel density estimation, return logProbs'
-    warnings.filterwarnings("ignore")
-    kde = KernelDensity(bandwidth=0.2, kernel='gaussian')
-    kde.fit(x)
-    return kde.score_samples(x)
-"""
-
+"""perform kernel density estimation on each dimension, then get result"""
 import numpy as np
 from fastkde import fastKDE
 
-# Generate 100000 datapoints in three different lists representing dimensions
-N = 1000000
-var1 = np.random.normal(size=N)
-var2 = np.random.normal(size=N)
-var3 = np.random.normal(size=N)
+    
+def kde(*walks):
+    'use fastKDE to perform kernel density estimation, return logProbs'
+    myPDF, _ = fastKDE.pdf(*walks)
+    return [myPDF[[[w[i]] for w in walks]][0] for i in range(len(walks[0]))]
 
-#Do the self-consistent density estimate
-myPDF, _ = fastKDE.pdf(var1 ,var2, var3)
-print myPDF.shape
+# Generate 100000 datapoints in three different lists representing dimensions
+N = 100000
+var1 = 10 + 50 * np.random.normal(size=N)
+var2 = 10 + 50 * np.random.normal(size=N)
+var3 = 10 + 50 * np.random.normal(size=N)
+
+lists = kde(var1, var2, var3)
+print lists[765]
