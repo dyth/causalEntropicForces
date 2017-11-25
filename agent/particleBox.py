@@ -3,14 +3,15 @@
 from numpy import array
 from scipy.constants import Boltzmann
 from scipy.stats import norm
-from math import sqrt
+from math import sqrt, log
 
 class ParticleBox:
 
     def __init__(self):
         # state variables
         self.length = 400.0
-        self.start = array([self.length/10.0, self.length/10.0])
+        #self.start = array([self.length/10.0, self.length/10.0])
+        self.start = array([5.0, self.length/10.0])
         self.bounds = ((0.0, self.length), (0.0, self.length/5.0))
         self.DIMS = len(self.bounds)
 
@@ -23,7 +24,8 @@ class ParticleBox:
 
         self.MEAN = 0.0
         self.AMPLITUDE = sqrt(self.MASS * self.KB * self.TR) / self.TIMESTEP
-        self.DISTRIBUTION = norm(self.MEAN, self.AMPLITUDE)
+        #self.AMPLITUDE = self.MASS * self.KB * self.TR / (self.TIMESTEP ** 2.0)
+        self.DISTRIBUTION = norm(self.MEAN, 1.0)
 
 
     def valid(self, walk, position):
