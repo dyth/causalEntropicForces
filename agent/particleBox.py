@@ -24,7 +24,6 @@ class ParticleBox:
 
         self.MEAN = 0.0
         self.AMPLITUDE = sqrt(self.MASS * self.KB * self.TR) / self.TIMESTEP
-        #self.AMPLITUDE = self.MASS * self.KB * self.TR / (self.TIMESTEP ** 2.0)
         self.DISTRIBUTION = norm(self.MEAN, 1.0)
 
 
