@@ -8,7 +8,7 @@ import matplotlib.pyplot as pl
 def step(u, environment):
     'compute next distance by Forward Euler'
     force = environment.AMPLITUDE*environment.DISTRIBUTION.rvs(environment.DIMS)
-    pos = u + (np.array(force) * environment.TIMESTEP) / (environment.MASS)
+    pos = u + (np.array(force) * environment.TIMESTEP) / environment.MASS
     return pos, force
 
 

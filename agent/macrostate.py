@@ -10,7 +10,7 @@ import sys
 def entropic_forcing(logProbs, environment, forces):
     'calculate the path integral and determine the next best move'
     pathIntegral = sum([f*logProbs[i] for i, f in enumerate(forces)])
-    nom = 2.0 * environment.TC * pathIntegral * environment.TIMESTEP ** 2
+    nom = 2.0 * environment.TC * pathIntegral * environment.TIMESTEP ** 2.0
     denom = 2.0 * environment.TR * environment.MASS * len(forces)
     return nom / denom 
 
