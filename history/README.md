@@ -38,11 +38,11 @@ The directory contains `particleBox.py`, a configuration file with information a
 
 Running `particleBoxAgentPlot.py` produces the following graphs animated with real-time updates for every step.
 
-![path](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/path.png)
-![2DPaths](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DPaths.png)
-![2DPoints](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DPoints.png)
-![2DPointsKDE](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DPointsKDE.png)
-![2DCone](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/2DCone.png)
+![path](https://raw.githubusercontent.com/dyth/causalEntropicForces/secondImplementation/history/images/path.png)
+![2DPaths](https://raw.githubusercontent.com/dyth/causalEntropicForces/secondImplementation/history/images/2DPaths.png)
+![2DPoints](https://raw.githubusercontent.com/dyth/causalEntropicForces/secondImplementation/history/images/2DPoints.png)
+![2DPointsKDE](https://raw.githubusercontent.com/dyth/causalEntropicForces/secondImplementation/history/images/2DPointsKDE.png)
+![2DCone](https://raw.githubusercontent.com/dyth/causalEntropicForces/secondImplementation/history/images/2DCone.png)
 
 ## Noughts and Crosses
 
@@ -62,4 +62,4 @@ Green lines indicate random walks representing games which the first player wins
 
 `2dlightCone.py` plots a light cone graph in 3 dimensions, using cartesian coordinates to represent a move on the board instead of enumerating the board as in `lightCone.py`. They produce the following graphs respectively.
 
-![2DNoughtsCrossesCone](https://raw.githubusercontent.com/dyth/causalEntropicForces/master/images/noughtsCrosses2D.png)
+![2DNoughtsCrossesCone](https://raw.githubusercontent.com/dyth/causalEntropicForces/secondImplementation/history/images/noughtsCrosses2D.png)
