@@ -20,7 +20,7 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     for _ in range(num_sample_paths):
         walk, force = [cur_macrostate], None
         count = int(environment.TAU / environment.TIMESTEP)
-        # explore the random walk until
+        # explore the random walk until 
         while count != 0:
             u, f = environment.step_microstate(walk[-1])
             # if valid then redo
@@ -39,9 +39,10 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     return 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
 
 
-def perform_causal_entropic_forcing(environment):
+def perform_causal_entropic_forcing(num_sample_paths, plot, environment):
     'reflex loop of model-based reflex agent'
     cur_macrostate = environment.start
+    path = [cur_macrostate]
     print cur_macrostate
     while True:
         # move agent
@@ -53,8 +54,14 @@ def perform_causal_entropic_forcing(environment):
             exit()
         print cur_macrostate
         path.append(cur_macrostate)
+        # plot if true
+        if plot == True:
+            environment.update_plot(path)
 
         
-path, num_sample_paths = [], 500
+num_sample_paths = 500
+plot = True
 environment = ParticleBox()
-perform_causal_entropic_forcing(environment)
+if plot == True:
+    environment.plot()
+perform_causal_entropic_forcing(num_sample_paths, plot, environment)
