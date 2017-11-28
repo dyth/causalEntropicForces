@@ -6,7 +6,7 @@ from scipy.stats import norm
 from math import sqrt, log
 from matplotlib import pyplot as plt
 
-class ParticleBox:
+class particleBox:
 
     def __init__(self):
         # state variables
@@ -32,7 +32,7 @@ class ParticleBox:
         random = self.DISTRIBUTION.rvs(self.DIMS)
         force = self.AMPLITUDE * random + self.MEAN
         euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS)
-        constant = 2.0 / self.TIMESTEP
+        constant = 5.0 #2.0 / self.TIMESTEP
         pos = cur_state + force * euler * constant
         return pos, force
     
@@ -50,7 +50,7 @@ class ParticleBox:
     
     def step_macrostate(self, cur_macrostate, causal_entropic_force):
         'move the particle subject to causal_entropic_force'
-        euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS)
+        euler = (self.TIMESTEP ** 2.0) / (4.0 * self.MASS)
         distance = causal_entropic_force * euler
         return cur_macrostate + distance
 

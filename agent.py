@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 """Model Based Reflex Agent with Entropic Forcing"""
-from particleBox import ParticleBox
+from particleBox import particleBox
 from sys import exit
 from numpy import array
 from scipy.stats import gaussian_kde
+from json import load
 
 
 def log_volume_fractions(walks):
@@ -39,12 +40,12 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     return 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
 
 
-def perform_causal_entropic_forcing(num_sample_paths, plot, environment):
+def perform_causal_entropic_forcing(num_sample_paths, steps, plot, environment):
     'reflex loop of model-based reflex agent'
     cur_macrostate = environment.start
     path = [cur_macrostate]
     print cur_macrostate
-    while True:
+    for _ in range(steps):
         # move agent
         causal_entropic_force = calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment)
         cur_macrostate = environment.step_macrostate(cur_macrostate, causal_entropic_force)
@@ -58,10 +59,23 @@ def perform_causal_entropic_forcing(num_sample_paths, plot, environment):
         if plot == True:
             environment.update_plot(path)
 
-        
-num_sample_paths = 500
-plot = True
-environment = ParticleBox()
-if plot == True:
-    environment.plot()
-perform_causal_entropic_forcing(num_sample_paths, plot, environment)
+
+if __name__ == "__main__":
+    # open config.json
+    with open('config.json') as configFile:
+        config = load(configFile)
+
+    # import environment
+    name = config["environment"]
+    environment_name = getattr(__import__(name, fromlist=[name]), name)
+    environment = environment_name()
+
+    # determine features of agent
+    num_sample_paths = config["num_sample_paths"]
+    steps = config["steps"]
+    plot = config["plot"]
+    if plot == True:
+        environment.plot()
+
+    # loop forever
+    perform_causal_entropic_forcing(num_sample_paths, steps, plot, environment)
