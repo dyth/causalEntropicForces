@@ -5,16 +5,6 @@ from sys import exit
 from numpy import array
 from scipy.stats import gaussian_kde
 
-    
-def step_microstate(cur_state, environment):
-    'compute next distance by Forward Euler'
-    random = environment.DISTRIBUTION.rvs(environment.DIMS)
-    force = environment.AMPLITUDE * random + environment.MEAN
-    euler = (environment.TIMESTEP ** 2.0) / (2.0 * environment.MASS)
-    constant = 2.0 / environment.TIMESTEP
-    pos = cur_state + force * euler * constant
-    return pos, force
-
 
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
@@ -30,12 +20,14 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     for _ in range(num_sample_paths):
         walk, force = [cur_macrostate], None
         count = int(environment.TAU / environment.TIMESTEP)
+        # explore the random walk until
         while count != 0:
-            u, f = step_microstate(walk[-1], environment)
+            u, f = environment.step_microstate(walk[-1])
             # if valid then redo
             if environment.valid(walk, u):
                 walk.append(u)
                 count -= 1
+                # only the initial force is needed
                 if force == None:
                     force = f
         sample_paths.append(walk[1:])
@@ -47,24 +39,22 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     return 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
 
 
-def step_macrostate(cur_macrostate, causal_entropic_force):
-    'move the particle subject to causal_entropic_force'
-    euler = (environment.TIMESTEP ** 2.0) / (2.0 * environment.MASS)
-    distance = causal_entropic_force * euler
-    return cur_macrostate + distance
+def perform_causal_entropic_forcing(environment):
+    'reflex loop of model-based reflex agent'
+    cur_macrostate = environment.start
+    print cur_macrostate
+    while True:
+        # move agent
+        causal_entropic_force = calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment)
+        cur_macrostate = environment.step_macrostate(cur_macrostate, causal_entropic_force)
+        # keep track of motion
+        if not environment.valid(path, cur_macrostate):
+            print "Error: Agent in invalid environment state,", cur_macrostate
+            exit()
+        print cur_macrostate
+        path.append(cur_macrostate)
 
-
+        
 path, num_sample_paths = [], 500
 environment = ParticleBox()
-cur_macrostate = environment.start
-print cur_macrostate
-while True:
-    # move agent
-    causal_entropic_force = calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment)
-    cur_macrostate = step_macrostate(cur_macrostate, causal_entropic_force)
-    # keep track of motion
-    if not environment.valid(path, cur_macrostate):
-        print "Error: Agent in invalid environment state,", cur_macrostate
-        exit()
-    print cur_macrostate
-    path.append(cur_macrostate)
+perform_causal_entropic_forcing(environment)

@@ -6,7 +6,7 @@ from scipy.stats import norm
 from math import sqrt, log
 
 class ParticleBox:
-
+    
     def __init__(self):
         # state variables
         self.length = 400.0
@@ -25,6 +25,16 @@ class ParticleBox:
         self.AMPLITUDE = sqrt(self.MASS * self.KB * self.TR) / self.TIMESTEP
         self.DISTRIBUTION = norm(0.0, 1.0)
 
+        
+    def step_microstate(self, cur_state):
+        'compute next distance by Forward Euler'
+        random = self.DISTRIBUTION.rvs(self.DIMS)
+        force = self.AMPLITUDE * random + self.MEAN
+        euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS)
+        constant = 2.0 / self.TIMESTEP
+        pos = cur_state + force * euler * constant
+        return pos, force
+    
 
     def valid(self, walk, position):
         'determine whether a walk is valid'
@@ -35,3 +45,10 @@ class ParticleBox:
             return False
         else:
             return True
+
+    
+    def step_macrostate(self, cur_macrostate, causal_entropic_force):
+        'move the particle subject to causal_entropic_force'
+        euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS)
+        distance = causal_entropic_force * euler
+        return cur_macrostate + distance
