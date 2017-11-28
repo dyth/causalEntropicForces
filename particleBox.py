@@ -32,7 +32,7 @@ class particleBox:
         random = self.DISTRIBUTION.rvs(self.DIMS)
         force = self.AMPLITUDE * random + self.MEAN
         euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS)
-        constant = 5.0 #2.0 / self.TIMESTEP
+        constant = 2.0 / self.TIMESTEP
         pos = cur_state + force * euler * constant
         return pos, force
     
