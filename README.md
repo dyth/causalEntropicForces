@@ -1,5 +1,7 @@
 # Causal Entropic Forces
 
+TODO: Investingate discounting.
+
 Reimplementation of [Causal Entropic Forces](http://math.mit.edu/~freer/papers/PhysRevLett_110-168702.pdf), bolstered by pseudocode and equations in [supplementary material](https://journals.aps.org/prl/supplemental/10.1103/PhysRevLett.110.168702).
 
 The algorithm is able to find policies unsupervised from an environment, provided it can interact with the environment beforehand. To do this, it iteratively finds the next best move it can take, represented in the below diagrams by the thick black arrow.
