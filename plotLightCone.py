@@ -27,7 +27,7 @@ def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
     points = array([w[-1] for w in walks])
     kernel = gaussian_kde(points.T)
-    return [-kernel.logpdf(w[-1]) for w in walks], kernel
+    return [kernel.pdf(w[-1]) for w in walks], kernel
 
 
 def causal(cur_macrostate, num_sample_paths, environment):
@@ -35,7 +35,7 @@ def causal(cur_macrostate, num_sample_paths, environment):
     # Monte Carlo path sampling
     walks, sample_paths, initial_forces = [], [], []
     for _ in range(num_sample_paths):
-        walk, force = [cur_macrostate], None
+        walk, forces = [cur_macrostate], []
         count = int(environment.TAU / environment.TIMESTEP)
         # explore the random walk until 
         while count != 0:
@@ -43,13 +43,11 @@ def causal(cur_macrostate, num_sample_paths, environment):
             # if valid then redo
             if environment.valid(walk, u):
                 walk.append(u)
+                forces.append(f)
                 count -= 1
-                # only the initial force is needed
-                if force == None:
-                    force = f
-        walks.append(walk)
         sample_paths.append(walk[1:])
-        initial_forces.append(force)
+        initial_forces.append(forces[0])
+        walks.append(walk)
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs, kernel = log_volume_fractions(sample_paths)
     # sum force contributions

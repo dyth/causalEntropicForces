@@ -11,7 +11,7 @@ def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
     points = array([w[-1] for w in walks])
     kernel = gaussian_kde(points.T)
-    return [-kernel.logpdf(w[-1]) for w in walks]
+    return [kernel.pdf(w[-1]) for w in walks]
 
     
 def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment):
@@ -19,7 +19,7 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     # Monte Carlo path sampling
     sample_paths, initial_forces = [], []
     for _ in range(num_sample_paths):
-        walk, force = [cur_macrostate], None
+        walk, forces = [cur_macrostate], []
         count = int(environment.TAU / environment.TIMESTEP)
         # explore the random walk until 
         while count != 0:
@@ -27,12 +27,10 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
             # if valid then redo
             if environment.valid(walk, u):
                 walk.append(u)
+                forces.append(f)
                 count -= 1
-                # only the initial force is needed
-                if force == None:
-                    force = f
         sample_paths.append(walk[1:])
-        initial_forces.append(force)
+        initial_forces.append(forces[0])
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs = log_volume_fractions(sample_paths)
     # sum force contributions
