@@ -2,16 +2,22 @@
 """Model Based Reflex Agent with Entropic Forcing"""
 from particleBox import particleBox
 from sys import exit
-from numpy import array
+from numpy import array, append as numpy_append
 from scipy.stats import gaussian_kde
 from json import load
 
 
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
-    points = array([w[-1] for w in walks])
+    points = []
+    for walk in walks:
+        for i, w in enumerate(walk):
+            indexedPoint = numpy_append(w, [i])
+            walk[i] = indexedPoint
+            points.append(indexedPoint)
+    points = array(points)
     kernel = gaussian_kde(points.T)
-    return [kernel.pdf(w[-1]) for w in walks]
+    return [-sum(kernel.logpdf(array(w).T)) for w in walks]
 
     
 def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment):
@@ -19,18 +25,19 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     # Monte Carlo path sampling
     sample_paths, initial_forces = [], []
     for _ in range(num_sample_paths):
-        walk, forces = [cur_macrostate], []
+        walk = [cur_macrostate]
+        forces = [array([0.0 for _ in range(environment.DIMS)])]
         count = int(environment.TAU / environment.TIMESTEP)
         # explore the random walk until 
         while count != 0:
-            u, f = environment.step_microstate(walk[-1])
+            u, f = environment.step_microstate(walk[-1], forces[-1])
             # if valid then redo
             if environment.valid(walk, u):
                 walk.append(u)
                 forces.append(f)
                 count -= 1
         sample_paths.append(walk[1:])
-        initial_forces.append(forces[0])
+        initial_forces.append(forces[1])
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs = log_volume_fractions(sample_paths)
     # sum force contributions

@@ -35,18 +35,19 @@ def causal(cur_macrostate, num_sample_paths, environment):
     # Monte Carlo path sampling
     walks, sample_paths, initial_forces = [], [], []
     for _ in range(num_sample_paths):
-        walk, forces = [cur_macrostate], []
+        walk = [cur_macrostate]
+        forces = [array([0.0 for _ in range(environment.DIMS)])]
         count = int(environment.TAU / environment.TIMESTEP)
         # explore the random walk until 
         while count != 0:
-            u, f = environment.step_microstate(walk[-1])
+            u, f = environment.step_microstate(walk[-1], forces[-1])
             # if valid then redo
             if environment.valid(walk, u):
                 walk.append(u)
                 forces.append(f)
                 count -= 1
         sample_paths.append(walk[1:])
-        initial_forces.append(forces[0])
+        initial_forces.append(forces[1])
         walks.append(walk)
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs, kernel = log_volume_fractions(sample_paths)
