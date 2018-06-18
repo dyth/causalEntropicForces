@@ -5,19 +5,28 @@ from sys import exit
 from numpy import array, append as numpy_append
 from scipy.stats import gaussian_kde
 from json import load
+from math import exp
 
 
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
     points = []
-    for walk in walks:
-        for i, w in enumerate(walk):
-            indexedPoint = numpy_append(w, [i])
-            walk[i] = indexedPoint
-            points.append(indexedPoint)
+    for i in range(len(walks)):
+        for j in range(len(walks[i])-1):
+            doublePoint = numpy_append(walks[i][j], walks[i][j+1])
+            walks[i][j] = doublePoint
+            points.append(doublePoint)
+        walks[i] = walks[i][:-1]
     points = array(points)
     kernel = gaussian_kde(points.T)
-    return [-sum(kernel.logpdf(array(w).T)) for w in walks]
+    logpdfs = [sum(kernel.logpdf(array(w).T)) for w in walks]
+    logpdfs = [exp(l) for l in logpdfs]
+    #minimum = min(logpdfs)
+    #logpdfs = [exp(minimum - l) for l in logpdfs]
+    #total = sum(logpdfs)
+    #logpdfs = [l / total for l in logpdfs]
+    print logpdfs
+    return logpdfs
 
     
 def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment):
