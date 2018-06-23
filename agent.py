@@ -20,11 +20,17 @@ def log_volume_fractions(walks):
     points = array(points)
     kernel = gaussian_kde(points.T)
     logpdfs = [sum(kernel.logpdf(array(w).T)) for w in walks]
-    logpdfs = [exp(l) for l in logpdfs]
-    #minimum = min(logpdfs)
-    #logpdfs = [exp(minimum - l) for l in logpdfs]
-    #total = sum(logpdfs)
-    #logpdfs = [l / total for l in logpdfs]
+    #logpdfs = [exp(l) for l in logpdfs]
+    minimum = min(logpdfs)
+    logpdfs = [exp(minimum - l) for l in logpdfs]
+    total = sum(logpdfs)
+    logpdfs = [l / total for l in logpdfs]
+
+
+    # now plot x and y transition kernels
+
+    
+    
     print logpdfs
     return logpdfs
 

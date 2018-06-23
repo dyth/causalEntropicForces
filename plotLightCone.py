@@ -81,13 +81,13 @@ def plot_3D(walks, environment, cur_macrostate, difference):
     ax.set_title("Particle in a 2 dimensional box")
     ax.set_xlim(0.0, 400.0)
     ax.set_ylim(-160.0, 240.0)
-    ax.set_zlim(0.0, 50.0)
+    ax.set_zlim(0.0, 10.0)
     ax.set_xlabel("Position / metres")
     ax.set_ylabel("Position / metres")
     ax.set_zlabel("Time / ms")
     for walk in walks:
         walk_plot = [[w[i] for w in walk] for i in range(environment.DIMS)]
-        ax.plot(walk_plot[0][:10], walk_plot[1][:10], 5.0*array(range(len(walk_plot[0][:10]))))
+        ax.plot(walk_plot[0], walk_plot[1], 0.025 * array(range(len(walk_plot[0]))))
     arrow_prop_dict = dict(linewidth=3.0, mutation_scale=1.0, arrowstyle='-|>', color='k', shrinkA=0, shrinkB=0)
     a = Arrow3D([cur_macrostate[0], cur_macrostate[0] + difference[0]], [cur_macrostate[1], cur_macrostate[1] + difference[1]], [0.0, 0.0], **arrow_prop_dict)
     ax.add_artist(a)
@@ -109,13 +109,13 @@ def plot_kernel(kernel, cur_macrostate, difference):
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
     # Contourf plot
-    cfset = ax.contourf(xx, yy, f, cmap='Blues')
-    ## Or kernel density estimate plot instead of the contourf plot
+    #cfset = ax.contourf(xx, yy, f, cmap='Blues')
+    # Or kernel density estimate plot instead of the contourf plot
     ax.imshow(np.rot90(f), cmap='Blues', extent=[xmin, xmax, ymin, ymax])
     # Contour plot
-    cset = ax.contour(xx, yy, f, colors='k')
+    #cset = ax.contour(xx, yy, f, colors='k')
     # Label plot
-    ax.clabel(cset, inline=1, fontsize=10)
+    #ax.clabel(cset, inline=1, fontsize=10)
     ax.set_xlabel('Position / metres')
     ax.set_ylabel('Position / metres')
     ax.set_title("Particle in a 2 dimensional box")
@@ -145,6 +145,6 @@ if __name__ == "__main__":
     difference = environment.step_macrostate(array([0.0, 0.0]), force)
     plot_kernel(kernel, cur_macrostate, difference)
     plot_3D(walks, environment, cur_macrostate, difference)
-    plot_2D(walks, environment, cur_macrostate, difference)
+    #plot_2D(walks, environment, cur_macrostate, difference)
     
     
