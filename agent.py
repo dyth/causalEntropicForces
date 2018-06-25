@@ -5,7 +5,7 @@ from sys import exit
 from numpy import array, append as numpy_append
 from scipy.stats import gaussian_kde
 from json import load
-from math import exp
+from math import exp, atan, sqrt
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -13,23 +13,6 @@ from matplotlib import pyplot as plt
 
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
-    """points = []
-    for i in range(len(walks)):
-        for j in range(len(walks[i])-1):
-            doublePoint = numpy_append(walks[i][j], walks[i][j+1])
-            walks[i][j] = doublePoint
-            points.append(doublePoint)
-        walks[i] = walks[i][:-1]
-    points = array(points)
-    kernel = gaussian_kde(points.T)
-    logpdfs = [sum(kernel.logpdf(array(w).T)) for w in walks]
-    #logpdfs = [exp(l) for l in logpdfs]
-    minimum = min(logpdfs)
-    logpdfs = [exp(minimum - l) for l in logpdfs]
-    total = sum(logpdfs)
-    logpdfs = [l / total for l in logpdfs]"""
-
-    # now plot x and y transition kernels
     pointsX, pointsY = [], []
     walksX, walksY = [], []
     for i in range(len(walks)):
@@ -39,15 +22,15 @@ def log_volume_fractions(walks):
             y = [walks[i][j][1], walks[i][j+1][1]]
             pointsX.append(x)
             pointsY.append(y)
-            walksX.append(x)
-            walksY.append(y)
+            walkX.append(x)
+            walkY.append(y)
         walksX.append(walkX)
         walksY.append(walkY)
     kernelX = gaussian_kde(array(pointsX).T)
     kernelY = gaussian_kde(array(pointsY).T)
-    print walksX[0]
-    logpdfsX = [sum(kernelX.logpdf(array(w))) for w in walksX]
-    logpdfsY = [sum(kernelY.logpdf(array(w))) for w in walksY]
+    logpdfsX = [sum(kernelX.logpdf(array(w).T)) for w in walksX]
+    logpdfsY = [sum(kernelY.logpdf(array(w).T)) for w in walksY]
+    """
     minimumX = min(logpdfsX)
     minimumY = min(logpdfsY)
     logpdfsX = [exp(minimumX - l) for l in logpdfsX]
@@ -55,15 +38,14 @@ def log_volume_fractions(walks):
     totalX = sum(logpdfsX)
     totalY = sum(logpdfsY)
     logpdfsX = [l / totalX for l in logpdfsX]
-    logpdfsY = [l / totalY for l in logpdfsY]
+    logpdfsY = [l / totalY for l in logpdfsY]"""
     logpdfs = array(zip(logpdfsX, logpdfsY))
     """
-    kernel = gaussian_kde(array(points).T)
     xmin, xmax = 0, 400
     ymin, ymax = 0, 400
     xx, yy = np.mgrid[xmin:xmax:200j, ymin:ymax:200j]
     positions = np.vstack([xx.ravel(), yy.ravel()])
-    f = np.reshape(kernel(positions).T, xx.shape)
+    f = np.reshape(kernelX(positions).T, xx.shape)
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect = 'equal')
     ax.set_xlim(xmin, xmax)
@@ -72,8 +54,6 @@ def log_volume_fractions(walks):
     ax.imshow(np.rot90(f), cmap='Blues', extent=[xmin, xmax, ymin, ymax])
     plt.show()
     input()"""
-    
-    #print logpdfs
     return logpdfs
 
     
@@ -95,6 +75,12 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
                 count -= 1
         sample_paths.append(walk[1:])
         initial_forces.append(forces[1])
+    angles = [atan(i[1] / i[0]) for i in initial_forces]
+    magnitude = [sqrt(i[1]**2.0 + i[0]**2.0) for i in initial_forces]
+    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
+    axs[0].hist(angles, bins=50)
+    axs[1].hist(magnitude, bins=50)
+    input()
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs = log_volume_fractions(sample_paths)
     # sum force contributions

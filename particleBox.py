@@ -26,12 +26,14 @@ class particleBox:
         self.AMPLITUDE = sqrt(self.MASS * self.KB * self.TR) / self.TIMESTEP
         self.DISTRIBUTION = norm(0.0, 1.0)
 
+        self.force = 0.0
+
 
     def step_microstate(self, cur_state, previousForce):
         'compute next distance by Forward Euler'
         random = self.DISTRIBUTION.rvs(self.DIMS)
         force = self.AMPLITUDE * random + self.MEAN
-        euler = (self.TIMESTEP ** 2.0) / (self.MASS / 2.0)
+        euler = (self.TIMESTEP ** 2.0) / (self.MASS * 2.0)
         pos = cur_state + (previousForce + force) * euler
         return pos, force
     
@@ -49,9 +51,11 @@ class particleBox:
     
     def step_macrostate(self, cur_macrostate, causal_entropic_force):
         'move the particle subject to causal_entropic_force'
-        euler = (self.TIMESTEP ** 2.0) / (self.MASS / 2.0)
-        return cur_macrostate + causal_entropic_force * euler
-
+        euler = (self.TIMESTEP ** 2.0) / (self.MASS * 2.0)
+        pos = cur_macrostate + (self.force + causal_entropic_force) * euler
+        self.force = causal_entropic_force
+        return pos
+    
     
     def plot(self):
         'initialise an interactive plot'
