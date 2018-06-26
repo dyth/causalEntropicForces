@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """particle in a box which drifts towards the centre"""
 from numpy import array
+from numpy.linalg import norm
 from scipy.constants import Boltzmann
 from scipy.stats import norm
 from math import sqrt, log
@@ -27,6 +28,8 @@ class particleBox:
         self.DISTRIBUTION = norm(0.0, 1.0)
 
         self.force = 0.0
+        self.maxForce = self.MASS * 400.0 / self.TIMESTEP
+        self.minForce = 0.0
 
 
     def step_microstate(self, cur_state, previousForce):
@@ -51,8 +54,11 @@ class particleBox:
     
     def step_macrostate(self, cur_macrostate, causal_entropic_force):
         'move the particle subject to causal_entropic_force'
+        force = self.force + causal_entropic_force
+        if norm(force) > self.maxForce:
+            force *= (self.maxForce / sqrt(force.dot(force)))
         euler = (self.TIMESTEP ** 2.0) / (self.MASS * 2.0)
-        pos = cur_macrostate + (self.force + causal_entropic_force) * euler
+        pos = cur_macrostate + force * euler
         self.force = causal_entropic_force
         return pos
     

@@ -28,8 +28,8 @@ def log_volume_fractions(walks):
         walksY.append(walkY)
     kernelX = gaussian_kde(array(pointsX).T)
     kernelY = gaussian_kde(array(pointsY).T)
-    logpdfsX = [sum(kernelX.logpdf(array(w).T)) for w in walksX]
-    logpdfsY = [sum(kernelY.logpdf(array(w).T)) for w in walksY]
+    logpdfsX = [-sum(kernelX.logpdf(array(w).T)) for w in walksX]
+    logpdfsY = [-sum(kernelY.logpdf(array(w).T)) for w in walksY]
     """
     minimumX = min(logpdfsX)
     minimumY = min(logpdfsY)
@@ -75,12 +75,11 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
                 count -= 1
         sample_paths.append(walk[1:])
         initial_forces.append(forces[1])
-    angles = [atan(i[1] / i[0]) for i in initial_forces]
-    magnitude = [sqrt(i[1]**2.0 + i[0]**2.0) for i in initial_forces]
-    fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
-    axs[0].hist(angles, bins=50)
-    axs[1].hist(magnitude, bins=50)
-    input()
+    #angles = [atan(i[1] / i[0]) for i in initial_forces]
+    #magnitude = [sqrt(i[1]**2.0 + i[0]**2.0) for i in initial_forces]
+    #fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
+    #axs[0].hist(angles, bins=50)
+    #axs[1].hist(magnitude, bins=50)
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs = log_volume_fractions(sample_paths)
     # sum force contributions
