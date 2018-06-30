@@ -28,32 +28,26 @@ def log_volume_fractions(walks):
         walksY.append(walkY)
     kernelX = gaussian_kde(array(pointsX).T)
     kernelY = gaussian_kde(array(pointsY).T)
-    logpdfsX = [-sum(kernelX.logpdf(array(w).T)) for w in walksX]
-    logpdfsY = [-sum(kernelY.logpdf(array(w).T)) for w in walksY]
-    """
-    minimumX = min(logpdfsX)
-    minimumY = min(logpdfsY)
-    logpdfsX = [exp(minimumX - l) for l in logpdfsX]
-    logpdfsY = [exp(minimumY - l) for l in logpdfsY]
-    totalX = sum(logpdfsX)
-    totalY = sum(logpdfsY)
-    logpdfsX = [l / totalX for l in logpdfsX]
-    logpdfsY = [l / totalY for l in logpdfsY]"""
+    logpdfsX = [sum(kernelX.logpdf(array(w).T)) for w in walksX]
+    logpdfsY = [sum(kernelY.logpdf(array(w).T)) for w in walksY]
     logpdfs = array(zip(logpdfsX, logpdfsY))
-    """
-    xmin, xmax = 0, 400
-    ymin, ymax = 0, 400
-    xx, yy = np.mgrid[xmin:xmax:200j, ymin:ymax:200j]
-    positions = np.vstack([xx.ravel(), yy.ravel()])
-    f = np.reshape(kernelX(positions).T, xx.shape)
-    fig = plt.figure()
-    ax = fig.add_subplot(111, aspect = 'equal')
-    ax.set_xlim(xmin, xmax)
-    ax.set_ylim(ymin, ymax)
-    cfset = ax.contourf(xx, yy, f, cmap='Blues')
-    ax.imshow(np.rot90(f), cmap='Blues', extent=[xmin, xmax, ymin, ymax])
+
+    fig, ax = plt.subplots(2, 1)
+    
+    xx, yy = np.mgrid[0:400:200j, 0:400:200j]
+    fX = np.reshape(kernelX(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
+    ax[0].set_xlim(0, 400)
+    ax[0].set_ylim(0, 400)
+    ax[0].imshow(np.rot90(fX), cmap='Blues', extent=[0, 400, 0, 400])
+    
+    xx, yy = np.mgrid[0:80:100j, 0:80:100j]
+    fY = np.reshape(kernelY(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
+    ax[1].set_xlim(0, 80)
+    ax[1].set_ylim(0, 80)
+    ax[1].imshow(np.rot90(fY), cmap='Blues', extent=[0, 80, 0, 80])
+    
     plt.show()
-    input()"""
+    input()
     return logpdfs
 
     
