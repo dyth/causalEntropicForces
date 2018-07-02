@@ -12,7 +12,7 @@ class particleBox:
     def __init__(self):
         # state variables
         self.length = 400.0
-        self.start = array([200.0, 40.0])#array([self.length/10.0, self.length/10.0])
+        self.start = array([self.length/10.0, self.length/10.0])
         self.bounds = ((0.0, self.length), (0.0, self.length/5.0))
         self.DIMS = len(self.bounds)
 

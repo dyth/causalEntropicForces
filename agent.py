@@ -14,23 +14,20 @@ from matplotlib import pyplot as plt
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
     points = array(walks).reshape((-1,2))
-    #print array(walks)
-    #points = array([walk[-1] for walk in walks])
-    kernelX = gaussian_kde(points.T)
-
+    endpoints = array([walk[-1] for walk in walks])
+    kernel = gaussian_kde(endpoints.T)
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect = 'equal')
     xx, yy = np.mgrid[0:400:200j, 0:80:200j]
-    f = np.reshape(kernelX(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
+    f = np.reshape(kernel(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
     ax.set_xlim(0, 400)
     ax.set_ylim(0, 80)
     ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
-    
     plt.show()
     plt.pause(0.001)
-    logpdfsX = [sum(kernelX.logpdf(array(w).T)) for w in walksX]
-    logpdfsY = [sum(kernelY.logpdf(array(w).T)) for w in walksY]
-    logpdfs = array(zip(logpdfsX, logpdfsY))
+    """
+    logpdfs = -array([kernel.pdf(endpoints.T)]).T
     return logpdfs
 
     
@@ -52,11 +49,6 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
                 count -= 1
         sample_paths.append(walk[1:])
         initial_forces.append(forces[1])
-    #angles = [atan(i[1] / i[0]) for i in initial_forces]
-    #magnitude = [sqrt(i[1]**2.0 + i[0]**2.0) for i in initial_forces]
-    #fig, axs = plt.subplots(1, 2, sharey=True, tight_layout=True)
-    #axs[0].hist(angles, bins=50)
-    #axs[1].hist(magnitude, bins=50)
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs = log_volume_fractions(sample_paths)
     # sum force contributions
