@@ -14,6 +14,8 @@ from matplotlib import pyplot as plt
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
     points = array(walks).reshape((-1,2))
+    #print array(walks)
+    #points = array([walk[-1] for walk in walks])
     kernelX = gaussian_kde(points.T)
 
     fig = plt.figure()
@@ -26,39 +28,6 @@ def log_volume_fractions(walks):
     
     plt.show()
     plt.pause(0.001)
-    """
-    pointsX, pointsY = [], []
-    walksX, walksY = [], []
-    for i in range(len(walks)):
-        walkX, walkY = [], []
-        for j in range(len(walks[i])-1):
-            x = [walks[i][j][0], walks[i][j+1][0]]
-            y = [walks[i][j][1], walks[i][j+1][1]]
-            pointsX.append(x)
-            pointsY.append(y)
-            walkX.append(x)
-            walkY.append(y)
-        walksX.append(walkX)
-        walksY.append(walkY)
-    kernelX = gaussian_kde(array(pointsX).T)
-    kernelY = gaussian_kde(array(pointsY).T)
-
-    fig, ax = plt.subplots(2, 1)
-    
-    xx, yy = np.mgrid[0:400:200j, 0:400:200j]
-    fX = np.reshape(kernelX(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
-    ax[0].set_xlim(0, 400)
-    ax[0].set_ylim(0, 400)
-    ax[0].imshow(np.rot90(fX), cmap='Blues', extent=[0, 400, 0, 400])
-    
-    xx, yy = np.mgrid[0:80:100j, 0:80:100j]
-    fY = np.reshape(kernelY(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
-    ax[1].set_xlim(0, 80)
-    ax[1].set_ylim(0, 80)
-    ax[1].imshow(np.rot90(fY), cmap='Blues', extent=[0, 80, 0, 80])"""
-    input()
-
-    
     logpdfsX = [sum(kernelX.logpdf(array(w).T)) for w in walksX]
     logpdfsY = [sum(kernelY.logpdf(array(w).T)) for w in walksY]
     logpdfs = array(zip(logpdfsX, logpdfsY))
