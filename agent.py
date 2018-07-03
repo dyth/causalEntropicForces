@@ -16,7 +16,7 @@ def log_volume_fractions(walks):
     points = array(walks).reshape((-1,2))
     endpoints = array([walk[-1] for walk in walks])
     kernel = gaussian_kde(endpoints.T)
-    """
+    
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect = 'equal')
     xx, yy = np.mgrid[0:400:200j, 0:80:200j]
@@ -26,7 +26,7 @@ def log_volume_fractions(walks):
     ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
     plt.show()
     plt.pause(0.001)
-    """
+    input()
     logpdfs = -array([kernel.pdf(endpoints.T)]).T
     return logpdfs
 
