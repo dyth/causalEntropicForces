@@ -13,9 +13,11 @@ from matplotlib import pyplot as plt
 
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
-    points = array(walks).reshape((-1,2))
     endpoints = array([walk[-1] for walk in walks])
-    kernel = gaussian_kde(endpoints.T)
+    #print endpoints
+    length = len(walks[0]) / 2
+    points = array([walk[length:] for walk in walks]).reshape((-1,2))
+    kernel = gaussian_kde(points.T)
     
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect = 'equal')

@@ -36,8 +36,9 @@ class particleBox:
         'compute next distance by Forward Euler'
         random = self.DISTRIBUTION.rvs(self.DIMS)
         force = self.AMPLITUDE * random + self.MEAN
-        euler = (self.TIMESTEP ** 2.0) / (self.MASS * 2.0)
-        pos = cur_state + (previousForce + force) * euler
+        euler = 10.0 * (self.TIMESTEP ** 2.0) / (self.MASS * 2.0)
+        #pos = cur_state + (previousForce + force) * euler
+        pos = cur_state + force * euler
         return pos, force
     
 
