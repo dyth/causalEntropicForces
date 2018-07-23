@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """particle in a box which drifts towards the centre"""
-from numpy import array
+from numpy import array, sinc
 from numpy.linalg import norm
 from scipy.constants import Boltzmann
 from scipy.stats import norm
@@ -34,7 +34,8 @@ class particleBox:
         force = self.AMPLITUDE * random + self.MEAN
         euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS * self.TIMESTEP)
         #pos = cur_state + (previousForce + force) * euler
-        pos = cur_state + force * euler
+        white = sinc((self.TIMESTEP - self.KB * self.TR) / self.TR)
+        pos = cur_state + force * euler * white
         return pos, force
     
 
