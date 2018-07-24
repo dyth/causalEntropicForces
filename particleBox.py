@@ -18,7 +18,7 @@ class particleBox:
 
         self.KB = Boltzmann      # Boltzmann Constant
         self.TAU = 10.0          # Time horizon
-        self.TR = 400000.0       # Temperature of random movement
+        self.TR = 40000.0       # Temperature of random movement
         self.TC = 5.0 * self.TR  # Causal Path Temperature
         self.TIMESTEP = 0.025    # Interval between random walk sampling
         self.MASS = 10.0 ** -21
@@ -34,7 +34,7 @@ class particleBox:
         force = self.AMPLITUDE * random + self.MEAN
         euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS * self.TIMESTEP)
         #pos = cur_state + (previousForce + force) * euler
-        white = sinc((self.TIMESTEP - self.KB * self.TR) / self.TR)
+        white = sinc(1.0 - self.TAU / self.TIMESTEP)
         pos = cur_state + force * euler * white
         return pos, force
     
