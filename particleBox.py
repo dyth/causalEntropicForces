@@ -18,7 +18,7 @@ class particleBox:
 
         self.KB = Boltzmann      # Boltzmann Constant
         self.TAU = 10.0          # Time horizon
-        self.TR = 40000.0       # Temperature of random movement
+        self.TR = 400000.0       # Temperature of random movement
         self.TC = 5.0 * self.TR  # Causal Path Temperature
         self.TIMESTEP = 0.025    # Interval between random walk sampling
         self.MASS = 10.0 ** -21
@@ -26,17 +26,14 @@ class particleBox:
         self.MEAN = 0.0
         self.AMPLITUDE = sqrt(self.MASS * self.KB * self.TR) / self.TIMESTEP
         self.DISTRIBUTION = norm(0.0, 1.0)
-
+        
 
     def step_microstate(self, cur_state, previousForce):
         'compute next distance by Forward Euler'
-        random = self.DISTRIBUTION.rvs(self.DIMS)
-        force = self.AMPLITUDE * random + self.MEAN
-        euler = (self.TIMESTEP ** 2.0) / (2.0 * self.MASS * self.TIMESTEP)
-        #pos = cur_state + (previousForce + force) * euler
-        white = sinc(1.0 - self.TAU / self.TIMESTEP)
-        pos = cur_state + force * euler * white
-        return pos, force
+        random = self.AMPLITUDE * self.DISTRIBUTION.rvs(self.DIMS) + self.MEAN
+        force = random + previousForce
+        pos = cur_state + force * (self.TIMESTEP**1.5) / (2.0*self.MASS)
+        return pos, random
     
 
     def valid(self, walk, position):
@@ -52,7 +49,7 @@ class particleBox:
     
     def step_macrostate(self, cur_macrostate, causal_entropic_force):
         'move the particle subject to causal_entropic_force'
-        euler = (self.TIMESTEP ** 2.0) / (self.MASS * 2.0)
+        euler = (self.TIMESTEP ** 1.5) / (self.MASS * 2.0)
         pos = cur_macrostate + causal_entropic_force * euler
         return pos
     

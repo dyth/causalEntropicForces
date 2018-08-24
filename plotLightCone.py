@@ -25,9 +25,12 @@ class Arrow3D(FancyArrowPatch):
 
 def log_volume_fractions(walks):
     'return log_volume_fractions on a set of random walks'
-    points = array([w[-1] for w in walks])
+    endpoints = array([walk[-1] for walk in walks])
+    length = int(0.75 * len(walks[0]))
+    points = array([walk[length:] for walk in walks]).reshape((-1,2))
     kernel = gaussian_kde(points.T)
-    return [kernel.pdf(w[-1]) for w in walks], kernel
+    logpdfs = -array([kernel.pdf(endpoints.T)]).T
+    return logpdfs, kernel
 
 
 def causal(cur_macrostate, num_sample_paths, environment):

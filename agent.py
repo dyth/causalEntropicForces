@@ -11,7 +11,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def log_volume_fractions(walks):
+def log_volume_fractions2(walks):
     'return log_volume_fractions on a set of random walks'
     endpoints = array([walk[-1] for walk in walks])
     #print endpoints
@@ -19,6 +19,7 @@ def log_volume_fractions(walks):
     points = array([walk[length:] for walk in walks]).reshape((-1,2))
     kernel = gaussian_kde(points.T)
     
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111, aspect = 'equal')
     xx, yy = np.mgrid[0:400:200j, 0:80:200j]
@@ -29,8 +30,22 @@ def log_volume_fractions(walks):
     plt.show()
     plt.pause(0.001)
     input()
+    """
+    
     logpdfs = -array([kernel.pdf(endpoints.T)]).T
     return logpdfs
+
+
+def log_volume_fractions(walks):
+    'compute log_volume_fractions in 3D'
+    walks = array([[list(w) + [i] for i, w in enumerate(ws)] for ws in walks])
+    kernel = gaussian_kde(walks.reshape((-1, 3)).T)
+    length = len(walks[0]) / 2
+    logpdfs = -array([kernel.pdf(w[length:].T) for w in walks]).sum(axis=1)
+    #print list(zip(logpdfs, [list(w[-1]) for w in walks]))
+    return logpdfs
+
+
 
     
 def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment):
@@ -54,7 +69,7 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs = log_volume_fractions(sample_paths)
     # sum force contributions
-    force = sum([f*log_volume_fracs[i] for i, f in enumerate(initial_forces)])
+    force = sum([f*l for i, l in zip(initial_forces, log_volume_fracs)])
     return 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
 
 
