@@ -59,13 +59,24 @@ def log_volume_fractions_slice(walks):
     return logpdfs, kernel
 
 
-def log_volume_fractions(walks):
+def log_volume_fractions_multiple(walks):
     'compute log_volume_fractions using timeslices'
     kernels = []
     for i in range(len(walks[0])):
         points = array([walk[i] for walk in walks]).reshape((-1,2))
         kernels.append(gaussian_kde(points.T))
-    print len(kernels)
+    f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
+    return f, kernels[-1]
+
+
+def log_volume_fractions_multiple(walks):
+    'compute log_volume_fractions with a big kernel'
+    kernels = []
+    for i in range(len(walks[0])):
+        points = array([walk[i] for walk in walks]).reshape((-1,2))
+        kernels.append(gaussian_kde(points.T))
+    f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
+    return f, kernels[-1]
 
     
 
@@ -92,7 +103,7 @@ def causal(cur_macrostate, num_sample_paths, environment):
     # Kernel Density Estimation of log volume fractions
     log_volume_fracs, kernel = log_volume_fractions(sample_paths)
     # sum force contributions
-    force = sum([f*log_volume_fracs[i] for i, f in enumerate(initial_forces)])
+    force = sum([f*l for i, l in zip(initial_forces, log_volume_fracs)])
     force = 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
     return walks, force, kernel
 
@@ -184,7 +195,7 @@ if __name__ == "__main__":
     walks, force, kernel = causal(cur_macrostate, num_sample_paths, environment)
     difference = environment.step_macrostate(array([0.0, 0.0]), force)
     plot_kernel(kernel, cur_macrostate, difference)
-    plot_3D(walks, environment, cur_macrostate, difference)
+    #plot_3D(walks, environment, cur_macrostate, difference)
     #plot_2D(walks, environment, cur_macrostate, difference)
     
     
