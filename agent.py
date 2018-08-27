@@ -36,15 +36,33 @@ def log_volume_fractions2(walks):
     return logpdfs
 
 
-def log_volume_fractions(walks):
+def log_volume_fractions_3d(walks):
     'compute log_volume_fractions in 3D'
     walks = array([[list(w) + [i] for i, w in enumerate(ws)] for ws in walks])
     kernel = gaussian_kde(walks.reshape((-1, 3)).T)
     length = len(walks[0]) / 2
     logpdfs = -array([kernel.pdf(w[length:].T) for w in walks]).sum(axis=1)
-    #print list(zip(logpdfs, [list(w[-1]) for w in walks]))
     return logpdfs
 
+
+def log_volume_fractions(walks):
+    'compute log_volume_fractions by aggregating all points together'
+    print array(walks).shape
+    points = array(walks).reshape((-1, 2))
+    print points
+    print points.shape
+    kernel = gaussian_kde(points.T)
+    
+    fig = plt.figure()
+    ax = fig.add_subplot(111, aspect = 'equal')
+    xx, yy = np.mgrid[0:400:200j, 0:80:200j]
+    f = np.reshape(kernel(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
+    ax.set_xlim(0, 400)
+    ax.set_ylim(0, 80)
+    ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
+    plt.show()
+    plt.pause(0.001)
+    input()
 
 
     

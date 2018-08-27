@@ -23,7 +23,7 @@ class Arrow3D(FancyArrowPatch):
         FancyArrowPatch.draw(self, renderer)
 
 
-def log_volume_fractions(walks):
+def log_volume_fractions2(walks):
     'return log_volume_fractions on a set of random walks'
     endpoints = array([walk[-1] for walk in walks])
     length = int(0.75 * len(walks[0]))
@@ -31,6 +31,43 @@ def log_volume_fractions(walks):
     kernel = gaussian_kde(points.T)
     logpdfs = -array([kernel.pdf(endpoints.T)]).T
     return logpdfs, kernel
+
+def log_volume_fractions_slice(walks):
+    'compute log_volume_fractions and step through time'
+    print array(walks).shape
+    points = array(walks).reshape((-1, 2))
+    print points
+    print points.shape
+
+    for i in range(0, 400, 5):
+        points = array([walk[i] for walk in walks]).reshape((-1,2))
+        kernel = gaussian_kde(points.T)
+        fig = plt.figure()
+        ax = fig.add_subplot(111, aspect = 'equal')
+        xx, yy = np.mgrid[0:400:200j, 0:80:200j]
+        f = np.reshape(kernel(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
+        ax.set_xlim(0, 400)
+        ax.set_ylim(0, 80)
+        ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
+        plt.show()
+    
+    endpoints = array([walk[-1] for walk in walks])
+    length = int(0.75 * len(walks[0]))
+    points = array([walk[length:] for walk in walks]).reshape((-1,2))
+    kernel = gaussian_kde(points.T)
+    logpdfs = -array([kernel.pdf(endpoints.T)]).T
+    return logpdfs, kernel
+
+
+def log_volume_fractions(walks):
+    'compute log_volume_fractions using timeslices'
+    kernels = []
+    for i in range(len(walks[0])):
+        points = array([walk[i] for walk in walks]).reshape((-1,2))
+        kernels.append(gaussian_kde(points.T))
+    print len(kernels)
+
+    
 
 
 def causal(cur_macrostate, num_sample_paths, environment):

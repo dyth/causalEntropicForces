@@ -1,6 +1,6 @@
 {
 	"environment"      : "particleBox",
-	"num_sample_paths" : 5,
+	"num_sample_paths" : 50,
 	"plot"             : true,
 	"steps"            : 500,
 	"cur_macrostate"   : null
