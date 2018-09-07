@@ -4,11 +4,13 @@ from json import load
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.stats import gaussian_kde
+from scipy import stats
 from numpy import array
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
+from mayavi import mlab
 
 
 class Arrow3D(FancyArrowPatch):
@@ -34,11 +36,6 @@ def log_volume_fractions2(walks):
 
 def log_volume_fractions_slice(walks):
     'compute log_volume_fractions and step through time'
-    print array(walks).shape
-    points = array(walks).reshape((-1, 2))
-    print points
-    print points.shape
-
     for i in range(0, 400, 5):
         points = array([walk[i] for walk in walks]).reshape((-1,2))
         kernel = gaussian_kde(points.T)
@@ -49,8 +46,7 @@ def log_volume_fractions_slice(walks):
         ax.set_xlim(0, 400)
         ax.set_ylim(0, 80)
         ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
-        plt.show()
-    
+        plt.show()    
     endpoints = array([walk[-1] for walk in walks])
     length = int(0.75 * len(walks[0]))
     points = array([walk[length:] for walk in walks]).reshape((-1,2))
@@ -59,26 +55,75 @@ def log_volume_fractions_slice(walks):
     return logpdfs, kernel
 
 
-def log_volume_fractions_multiple(walks):
+def log_volume_fractions(walks):
     'compute log_volume_fractions using timeslices'
     kernels = []
     for i in range(len(walks[0])):
         points = array([walk[i] for walk in walks]).reshape((-1,2))
         kernels.append(gaussian_kde(points.T))
-    f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
+    f = [1.0 / sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
     return f, kernels[-1]
 
 
-def log_volume_fractions_multiple(walks):
-    'compute log_volume_fractions with a big kernel'
-    kernels = []
-    for i in range(len(walks[0])):
-        points = array([walk[i] for walk in walks]).reshape((-1,2))
-        kernels.append(gaussian_kde(points.T))
-    f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
-    return f, kernels[-1]
+def log_volume_fractions_big(walks):
+    'compute log_volume_fractions using one big kernel'
+    points = array(walks).reshape((-1, 2))
+    kernel = gaussian_kde(points.T)
+    f = [sum([kernel.pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
+    return f, kernel
 
+
+def log_volume_fractions_3d(walks):
+    'compute log_volume_fractions in 3D'
+    walks = array([[list(w) + [i] for i, w in enumerate(ws)] for ws in walks])
+    kernel = gaussian_kde(walks.reshape((-1, 3)).T)
+    length = len(walks[0]) / 2
+    logpdfs = -array([kernel.pdf(w[length:].T) for w in walks]).sum(axis=1)
     
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    points = walks.reshape((-1, 3))
+
+    xs = [p[0] for p in points]
+    ys = [p[1] for p in points]
+    zs = [p[2] for p in points]
+    
+    ax.scatter(xs, ys, zs)
+    plt.show()
+    
+    return logpdfs, kernel
+
+
+
+def plot_kernel_density(walks):
+    'compute log_volume_fractions in 3D'
+    walks = array([[list(w) + [i] for i, w in enumerate(ws)] for ws in walks])
+    points = walks.reshape((-1, 3))
+
+    x = [p[0] for p in points]
+    y = [p[1] for p in points]
+    z = [p[2] for p in points]
+
+    xyz = np.vstack([x,y,z])
+    kde = stats.gaussian_kde(xyz)
+
+    # Evaluate kde on a grid
+    xmin, ymin, zmin = 0, 0, 0
+    xmax, ymax, zmax = 400, 80, 400
+    xi, yi, zi = np.mgrid[xmin:xmax:30j, ymin:ymax:30j, zmin:zmax:30j]
+    coords = np.vstack([item.ravel() for item in [xi, yi, zi]]) 
+    density = kde(coords).reshape(xi.shape)
+
+    # Plot scatter with mayavi
+    figure = mlab.figure('DensityPlot')
+
+    grid = mlab.pipeline.scalar_field(xi, yi, zi, density)
+    min = density.min()
+    max=density.max()
+    mlab.pipeline.volume(grid, vmin=min, vmax=min + .5*(max-min))
+
+    mlab.axes()
+    mlab.show()
 
 
 def causal(cur_macrostate, num_sample_paths, environment):
@@ -101,7 +146,7 @@ def causal(cur_macrostate, num_sample_paths, environment):
         initial_forces.append(forces[1])
         walks.append(walk)
     # Kernel Density Estimation of log volume fractions
-    log_volume_fracs, kernel = log_volume_fractions(sample_paths)
+    log_volume_fracs, kernel = plot_kernel_density(sample_paths)
     # sum force contributions
     force = sum([f*l for i, l in zip(initial_forces, log_volume_fracs)])
     force = 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
@@ -195,7 +240,7 @@ if __name__ == "__main__":
     walks, force, kernel = causal(cur_macrostate, num_sample_paths, environment)
     difference = environment.step_macrostate(array([0.0, 0.0]), force)
     plot_kernel(kernel, cur_macrostate, difference)
-    #plot_3D(walks, environment, cur_macrostate, difference)
+    plot_3D(walks, environment, cur_macrostate, difference)
     #plot_2D(walks, environment, cur_macrostate, difference)
     
     

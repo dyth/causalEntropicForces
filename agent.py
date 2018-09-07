@@ -45,25 +45,25 @@ def log_volume_fractions_3d(walks):
     return logpdfs
 
 
-def log_volume_fractions(walks):
-    'compute log_volume_fractions by aggregating all points together'
-    print array(walks).shape
-    points = array(walks).reshape((-1, 2))
-    print points
-    print points.shape
-    kernel = gaussian_kde(points.T)
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111, aspect = 'equal')
-    xx, yy = np.mgrid[0:400:200j, 0:80:200j]
-    f = np.reshape(kernel(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
-    ax.set_xlim(0, 400)
-    ax.set_ylim(0, 80)
-    ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
-    plt.show()
-    plt.pause(0.001)
-    input()
+def log_volume_fractions_slice(walks):
+    'compute log_volume_fractions using timeslices'
+    kernels = []
+    for i in range(len(walks[0])):
+        points = array([walk[i] for walk in walks]).reshape((-1,2))
+        kernels.append(gaussian_kde(points.T))
+    f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
+    return f
 
+
+def log_volume_fractions(walks):
+    'compute log_volume_fractions using timeslices'
+    kernels = []
+    for i in range(len(walks[0])):
+        points = array([walk[i] for walk in walks]).reshape((-1,2))
+        kernels.append(gaussian_kde(points.T))
+    #f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
+    f = [sum([k.pdf(ws[0])[0] for k in kernels]) for ws in walks]
+    return f
 
     
 def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment):
