@@ -65,6 +65,23 @@ def log_volume_fractions(walks):
     f = [sum([k.pdf(ws[0])[0] for k in kernels]) for ws in walks]
     return f
 
+
+def log_volume_fractions(walks):
+    'compute log_volume_fractions using transition kernel'
+    points = []
+    transitions = []
+    for walk in walks:
+        transition = []
+        for i, w in enumerate(walk[:-1]):
+            point = list(w) + list(walk[i+1])
+            transition.append(point)
+            points.append(point)
+        transitions.append(transition)
+    k = gaussian_kde(array(points).T)
+    probs = array([sum([k.pdf(t) for t in ts]) for ts in transitions])
+    probs = probs / np.sqrt((np.sum(probs**2)))
+    return probs
+
     
 def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environment):
     'calculate the path integral'
