@@ -55,13 +55,12 @@ def log_volume_fractions_slice(walks):
     return f
 
 
-def log_volume_fractions(walks):
-    'compute log_volume_fractions using timeslices'
+def log_volume_fractions_all_slices(walks):
+    'compute log_volume_fractions using all values in one timeslice'
     kernels = []
     for i in range(len(walks[0])):
         points = array([walk[i] for walk in walks]).reshape((-1,2))
         kernels.append(gaussian_kde(points.T))
-    #f = [sum([kernels[i].pdf(w)[0] for i, w in enumerate(ws)]) for ws in walks]
     f = [sum([k.pdf(ws[0])[0] for k in kernels]) for ws in walks]
     return f
 
@@ -78,8 +77,9 @@ def log_volume_fractions(walks):
             points.append(point)
         transitions.append(transition)
     k = gaussian_kde(array(points).T)
+    #probs = array([sum(k.pdf(array(ts).T)) for ts in transitions])
     probs = array([sum([k.pdf(t) for t in ts]) for ts in transitions])
-    probs = probs / np.sqrt((np.sum(probs**2)))
+    probs = -probs / np.sqrt((np.sum(probs**2)))
     return probs
 
     
