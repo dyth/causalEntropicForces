@@ -11,6 +11,27 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
+def log_volume_fractions_endpoints(walks):
+    'perform KDE on endpoints only'
+    endpoints = array([walk[-1] for walk in walks])
+    kernel = gaussian_kde(endpoints.T)
+    logpdfs = -array([kernel.pdf(endpoints.T)]).T
+
+    if False:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, aspect = 'equal')
+        xx, yy = np.mgrid[0:400:200j, 0:80:200j]
+        f = np.reshape(kernel(np.vstack([xx.ravel(), yy.ravel()])).T, xx.shape)
+        ax.set_xlim(0, 400)
+        ax.set_ylim(0, 80)
+        ax.imshow(np.rot90(f), cmap='Blues', extent=[0, 400, 0, 80])
+        plt.show()
+        plt.pause(0.001)
+        input()
+
+    return logpdfs
+
+    
 def log_volume_fractions2(walks):
     'return log_volume_fractions on a set of random walks'
     endpoints = array([walk[-1] for walk in walks])
@@ -93,7 +114,7 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
         count = int(environment.TAU / environment.TIMESTEP)
         # explore the random walk until 
         while count != 0:
-            u, f = environment.step_microstate(walk[-1], forces[-1])
+            u, f = environment.step_microstate(walk[-1], 0)#forces[-1])
             # if valid then redo
             if environment.valid(walk, u):
                 walk.append(u)
@@ -102,10 +123,10 @@ def calculate_causal_entropic_force(cur_macrostate, num_sample_paths, environmen
         sample_paths.append(walk[1:])
         initial_forces.append(forces[1])
     # Kernel Density Estimation of log volume fractions
-    log_volume_fracs = log_volume_fractions(sample_paths)
+    log_volume_fracs = log_volume_fractions_endpoints(sample_paths)
     # sum force contributions
     force = sum([f*l for i, l in zip(initial_forces, log_volume_fracs)])
-    return 2.0 * environment.TC * force / (environment.TR * num_sample_paths)
+    return 2.0 * environment.TC * force / (environment.TR)# * num_sample_paths)
 
 
 def perform_causal_entropic_forcing(num_sample_paths, steps, plot, environment):
